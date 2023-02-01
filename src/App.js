@@ -1,5 +1,4 @@
-import io from 'socket.io-client';
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Board } from "./Board";
 import { ResetButton } from "./ResetButton";
 import { ScoreBoard } from "./ScoreBoard";
@@ -9,35 +8,12 @@ import './Dice.css';
 
 const App = () =>{
 
-  // const componentDidMount = () => {
-  //   const socket = io('http://localhost:3000');
-  //   socket.on('connect', () => {
-  //     console.log('Connected to socket.io server');
-  //     socket.emit('my-event', { data: 'This is my data' });
-  //   });
-  //   socket.on('server-event', (data) => {
-  //     console.log('Received data from server:', data);
-  //     this.setState({ data: data });
-  //   });
-  // }
-
+  
   const [playerOne, setPlayerOneBoard] = useState(Array(9).fill(null))
   const [playerTwo, setPlayerTwoBoard] = useState(Array(9).fill(null))
   const [playerXPlaying, setPlayerxPlayer] = useState(true)
   const [die, setDie] = useState(Math.floor(Math.random() * 6 + 1))
-  const [data, setData] = useState(null)
-
-  useEffect(() => {
-    const socket = io('http://localhost:3100/');
-    socket.on('connect', () => {
-      console.log('Connected to socket.io server');
-      socket.emit('my-event', { data: 'This is my data' });
-    });
-    socket.on('server-event', (data) => {
-      console.log('Received data from server:', data);
-      setData(data);
-    });
-  }, []);
+  
   
   const handleBoxClickPlayerOne = (indx) => {
     if (!playerOne.includes(null)) {
@@ -190,7 +166,7 @@ const App = () =>{
     return(
       <div>
         
-        <ScoreBoard names={{playerOneName: "Ali", playerTwoName: "Mmd"}} scores={updateScore()} playerXPlaying={playerXPlaying} />
+        <ScoreBoard names={{playerOneName: "POne", playerTwoName: "PTwo"}} scores={updateScore()} playerXPlaying={playerXPlaying} />
         <Board name={"X"} board={playerOne} onClick={handleBoxClickPlayerOne}/>
         <Dice roll={die} clicked={false}/>
         <Board name={"O"} board={playerTwo} onClick={handleBoxClickPlayerTwo}/>

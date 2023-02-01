@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import './Dice.css';
 
 export const Dice = ({roll, clicked}) => {
