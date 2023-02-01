@@ -8,13 +8,7 @@ The score is calculated by adding the numbers in each column and adding the tota
 
 If at any point in the game a player plays a number that is the same as one in the other player's column, the second player loses all instances of that number in that column. This rule is in place to reward players for taking risks and having repeated numbers in their columns.
 
-# Features
-9-square Tic Tac Toe board
-Two players can play the game
-Players take turns to place their mark (X or O)
-Dice feature to determine player moves
-Scoreboard to keep track of the score for each player
-Reset button to start a new game
+
 
 # Technology Stack
 ReactJS
