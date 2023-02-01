@@ -1,2 +1,2 @@
-# colt_minigame
+# Tic-Tac-Toe
  minigame
