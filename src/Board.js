@@ -3,8 +3,10 @@ import React from 'react'
 import { Box } from "./Box"
 import "./Board.css"
 
-export const Board = ({ name, board, onClick }) => {
-  
+export const Board = ({ name, board, onClick, match}) => {
+
+  // const {playerOneName, playerTwoName} = match;
+
   return (
     <div>
       

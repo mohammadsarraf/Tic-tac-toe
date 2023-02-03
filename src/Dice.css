@@ -3,34 +3,34 @@
   justify-content: center;
   align-items: center;
   height: auto;
-  }
-  
-  .dice {
-  width: 80px;
-  height: 80px;
+}
+
+.dice {
+  width: 100px;
+  height: 100px;
   background-color: white;
   border: 1px solid black;
-  border-radius: 8px;
+  border-radius: 10px;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 28.8px;
+  font-size: 36px;
   color: rgba(186, 158, 0, 0.676);
   cursor: pointer;
   animation: show-dice 1s linear forwards;
-  }
-  
-  @keyframes show-dice {
+}
+
+@keyframes show-dice {
   0% {
-  transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);
-  opacity: 0;
+    transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+    opacity: 0;
   }
   50% {
-  transform: rotateX(360deg) rotateY(360deg) rotateZ(360deg);
-  opacity: 0.5;
+    transform: rotateX(360deg) rotateY(360deg) rotateZ(360deg);
+    opacity: 0.5;
   }
   100% {
-  transform: rotateX(360deg) rotateY(360deg) rotateZ(360deg);
-  opacity: 1;
+    transform: rotateX(360deg) rotateY(360deg) rotateZ(360deg);
+    opacity: 1;
   }
-  }
+}

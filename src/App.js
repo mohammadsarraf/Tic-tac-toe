@@ -15,20 +15,20 @@ const App = () =>{
   const [die, setDie] = useState(Math.floor(Math.random() * 6 + 1))
   
   
+  const handleGameOver = () => {
+    if (!playerOne.includes(null) || !playerTwo.includes(null)) {
+      return true
+    }
+    return false
+  }
+
   const handleBoxClickPlayerOne = (indx) => {
-    if (!playerOne.includes(null)) {
-      return;
-    }
-    if (!playerTwo.includes(null)) {
-      return;
-    }
+
     const updateBoard = playerOne.map((value, index) => {
       if (index === indx & playerXPlaying === true) {
         update2(die, index);
         setPlayerxPlayer(!playerXPlaying)
         setDie(Math.floor(Math.random() * 6 + 1))
-        
-        
         return die;
       } else {
         return value;
@@ -37,16 +37,11 @@ const App = () =>{
     setPlayerOneBoard(sort(updateBoard));
     setPlayerTwoBoard(sort(playerTwo))
     
-    
   }
 
+
   const handleBoxClickPlayerTwo = (indx) => {
-    if (!playerOne.includes(null)) {
-      return;
-    }
-    if (!playerTwo.includes(null)) {
-      return;
-    }
+
     const updateBoard = playerTwo.map((value, index) => {
       if (index === indx & playerXPlaying === false) {
         update1(die, index)
@@ -62,7 +57,7 @@ const App = () =>{
     })
     setPlayerOneBoard(sort(playerOne))
     setPlayerTwoBoard(sort(updateBoard));
-        
+
     
 
   }
@@ -165,12 +160,22 @@ const App = () =>{
 
     return(
       <div>
-        
-        <ScoreBoard names={{playerOneName: "POne", playerTwoName: "PTwo"}} scores={updateScore()} playerXPlaying={playerXPlaying} />
-        <Board name={"X"} board={playerOne} onClick={handleBoxClickPlayerOne}/>
-        <Dice roll={die} clicked={false}/>
-        <Board name={"O"} board={playerTwo} onClick={handleBoxClickPlayerTwo}/>
-        <ResetButton resetBoard={resetBoard} />
+        {handleGameOver() ? (
+        <div className="GameOver">
+          
+          <ScoreBoard names={{playerOneName: "POne", playerTwoName: "PTwo"}} scores={updateScore()} playerXPlaying={playerXPlaying} />
+          <Board name={"X"} board={playerOne} onClick={null}/>
+          <h1 style={{fontSize: "30px", color: "red", background: "lightblue", textAlign: "center"}}>gameover</h1>
+          <Board name={"O"} board={playerTwo} onClick={null}/>
+          <ResetButton resetBoard={resetBoard} />
+        </div>):
+        (<div className="Game">
+          <ScoreBoard names={{playerOneName: "POne", playerTwoName: "PTwo"}} scores={updateScore()} playerXPlaying={playerXPlaying} />
+          <Board name={"X"} board={playerOne} onClick={handleBoxClickPlayerOne}/>
+          <Dice roll={die} clicked={false}/>
+          <Board name={"O"} board={playerTwo} onClick={handleBoxClickPlayerTwo}/>
+          <ResetButton resetBoard={resetBoard} />
+        </div>)}
       </div>
     )
   }
