@@ -1,25 +1,84 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Board } from "./Board";
 import { ResetButton } from "./ResetButton";
 import { ScoreBoard } from "./ScoreBoard";
 import {Dice} from "./Dice";
 import './App.css';
 import './Dice.css';
+import { initializeApp } from "firebase/app";
+import { getFirestore } from "firebase/firestore";
+import { getDatabase, ref, onValue} from "firebase/database";
+
+import { doc, setDoc, onSnapshot } from "firebase/firestore"; 
+import { getAnalytics } from "firebase/analytics";
+
 
 const App = () =>{
-
-  
+  const [hasbeenRead, setHasBeenRead] = useState(true);
   const [playerOne, setPlayerOneBoard] = useState(Array(9).fill(null))
   const [playerTwo, setPlayerTwoBoard] = useState(Array(9).fill(null))
   const [playerXPlaying, setPlayerxPlayer] = useState(true)
   const [die, setDie] = useState(Math.floor(Math.random() * 6 + 1))
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDPOso7TN-BQqeDH0n0RqYRD9l1sl0jG_U",
+    authDomain: "cotlbackend.firebaseapp.com",
+    projectId: "cotlbackend",
+    storageBucket: "cotlbackend.appspot.com",
+    messagingSenderId: "573479045129",
+    appId: "1:573479045129:web:72bd62c50e8f44fbc350d8",
+    measurementId: "G-4LMH1Y4PZJ"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+  const db = getFirestore(app);
+
+  const WriteData = async () =>{
+    await setDoc(doc(db, "Sessions", "234567890"), {
+      playerone: playerOne,
+      playertwo: playerTwo,
+      die: die,
+      finished: handleGameOver(), 
+      PlayeroneName:   "null",  //TODO: 
+      PlayertwoName: "null", // TODO: Get player name 
+    });
+  }
   
+  const unsub = onSnapshot(doc(db, "Sessions", "234567890"), (doc) => {
+      // console.log("Current Data: ", doc.data());
+      // console.log("PlayerTwo: ", doc.data().playertwo);
+      // console.log("Die: ", doc.data().die);
+      // console.log("GameOver: ", doc.data().finished);
+      // setPlayerOneBoard(doc.data().playerone)
+      // setPlayerTwoBoard(doc.data().playertwo)
+      // setDie(doc.data().die)
+      // setHasBeenRead(true)
+  })
+
+// const dbr = getDatabase(); 
+// const changedstate = ref(dbr, 'Sessions/234567890/playertwo');
+// onValue(changedstate, (snapshot) => {
+//   const data = snapshot.val();
+//   console.log(" This is the updated data information ", data);
+
   
+// });
+
+// const updategameonchangedb = () =>
+// {
+  
+
+// }
   const handleGameOver = () => {
     if (!playerOne.includes(null) || !playerTwo.includes(null)) {
       return true
     }
     return false
+  }
+
+  const hadnleRead = (hasbeenRead) => {
+    return (!hasbeenRead)
   }
 
   const handleBoxClickPlayerOne = (indx) => {
@@ -36,7 +95,8 @@ const App = () =>{
     })
     setPlayerOneBoard(sort(updateBoard));
     setPlayerTwoBoard(sort(playerTwo))
-    
+    setHasBeenRead(false)
+    WriteData();
   }
 
 
@@ -57,8 +117,8 @@ const App = () =>{
     })
     setPlayerOneBoard(sort(playerOne))
     setPlayerTwoBoard(sort(updateBoard));
-
-    
+    setHasBeenRead(false)
+    WriteData();
 
   }
 
@@ -116,6 +176,7 @@ const App = () =>{
     const col1 = moveZerosToEnd([board[1],board[1+3],board[1+6]]);
     const col2 = moveZerosToEnd([board[2],board[2+3],board[2+6]]);
 
+
     let combinedList1 = []
     for (let i = 0; i < 3; i++){
       combinedList1.push(col0[i], col1[i], col2[i]);
@@ -157,8 +218,12 @@ const App = () =>{
     }
     sort(playerTwo)
   }
+  if (hasbeenRead === false){
+    {WriteData()} 
+  }
 
     return(
+
       <div>
         {handleGameOver() ? (
         <div className="GameOver">
@@ -175,6 +240,7 @@ const App = () =>{
           <Dice roll={die} clicked={false}/>
           <Board name={"O"} board={playerTwo} onClick={handleBoxClickPlayerTwo}/>
           <ResetButton resetBoard={resetBoard} />
+          
         </div>)}
       </div>
     )
