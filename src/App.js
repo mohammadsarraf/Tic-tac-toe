@@ -7,7 +7,7 @@ import './App.css';
 import './Dice.css';
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
-import { getDatabase, ref, onValue} from "firebase/database";
+// import { getDatabase, ref, onValue} from "firebase/database";
 
 import { doc, setDoc, onSnapshot } from "firebase/firestore"; 
 import { getAnalytics } from "firebase/analytics";
@@ -42,15 +42,17 @@ const App = () =>{
       playertwo: playerTwo,
       die: die,
       finished: handleGameOver(), 
-      PlayeroneName:   "null",  //TODO: 
-      PlayertwoName: "null", // TODO: Get player name 
-    });
+      PlayeroneName:   "null", 
+      //TODO: 
+      //PlayertwoName: "null", // TODO: Get player name 
+
+    }, {merge:true});
     console.log("Writing  data...");
 
   }
   WriteData(); 
 
-},[playerOne, playerTwo])
+},[playerOne])
   
   
   useEffect(() => {
