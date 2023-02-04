@@ -6,19 +6,20 @@ import {Dice} from "./Dice";
 import './App.css';
 import './Dice.css';
 import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
-import { getDatabase, ref, onValue} from "firebase/database";
+import { getFirestore, updateDoc } from "firebase/firestore";
+// import { getDatabase, ref, onValue} from "firebase/database";
 
-import { doc, setDoc, onSnapshot } from "firebase/firestore"; 
+import { doc, setDoc, onSnapshot, getDoc } from "firebase/firestore"; 
 import { getAnalytics } from "firebase/analytics";
 
 
 const App = () =>{
-  const [hasbeenRead, setHasBeenRead] = useState(true);
   const [playerOne, setPlayerOneBoard] = useState(Array(9).fill(null))
   const [playerTwo, setPlayerTwoBoard] = useState(Array(9).fill(null))
   const [playerXPlaying, setPlayerxPlayer] = useState(true)
+  const [check, setCheck] = useState(false)
   const [die, setDie] = useState(Math.floor(Math.random() * 6 + 1))
+  const IntialzeBoard = false; 
 
   const firebaseConfig = {
     apiKey: "AIzaSyChA2eWNpmPbVHalWGawI2yaBdiCnhJJ2Y",
@@ -29,37 +30,64 @@ const App = () =>{
     appId: "1:868620196777:web:02bdbd4f188daae93842b8",
     measurementId: "G-4Q2N47XNVS"
   };
+  
 
   const app = initializeApp(firebaseConfig);
   const analytics = getAnalytics(app);
   const db = getFirestore(app);
 
-  useEffect(() => {
-    const WriteData = async () =>{
+
+  useEffect ( () => {
+  const IntialzeBoard = async () =>{
+    const docRef = doc(db, "Sessions", "234567890");
+    const docSnap = await getDoc(docRef);
+    
+    if (docSnap.exists()) {
+      setPlayerOneBoard(doc.data().playerone)
+      setPlayerTwoBoard(doc.data().playertwo)
+      setDie(doc.data().die)
+      setPlayerxPlayer(doc.data().playerXPlaying)
+      alert(playerXPlaying);
+      // setCheck(true);
+    } else {
+      // doc.data() will be undefined in this case
       await setDoc(doc(db, "Sessions", "234567890"), {
         playerone: playerOne,
         playertwo: playerTwo,
         die: die,
         finished: handleGameOver(), 
-        PlayeroneName:   "null",  //TODO: 
-        PlayertwoName: "null", // TODO: Get player name 
+        PlayeroneName:  "ReadyPlayerOne", 
+        playerXPlaying: true
+        //TODO: 
+        //PlayertwoName: "null", // TODO: Get player name 
+  
       });
-    }
-    WriteData();
-  }, [playerOne, playerTwo])
+      console.log("Writing  data...");
+    } 
+  
+
+  }
+
+
+    IntialzeBoard(); 
+  
+
+},[])
+  
   
   useEffect(() => {
     const unsub = onSnapshot(doc(db, "Sessions", "234567890"), (doc) => {
-      console.log("PlayerOne: ", doc.data().playerone);
-      console.log("PlayerTwo: ", doc.data().playertwo);
-      // console.log("Die: ", doc.data().die);
-      // console.log("GameOver: ", doc.data().finished);
-      setPlayerOneBoard(doc.data().playerone)
-      setPlayerTwoBoard(doc.data().playertwo)
-      setDie(doc.data().die)
-      // setHasBeenRead(true)
-    })
-  },[])
+        console.log("Current Data: ", doc.data());
+        console.log("PlayerTwo: ", doc.data().playertwo);
+        console.log("Die: ", doc.data().die);
+        console.log("GameOver: ", doc.data().finished);
+        setPlayerOneBoard(sort(doc.data().playerone))
+        setPlayerTwoBoard(sort(doc.data().playertwo))
+        setDie(doc.data().die)
+        setPlayerxPlayer(doc.data().playerXPlaying)
+      }
+  )
+  }, [])
 
   const handleGameOver = () => {
     if (!playerOne.includes(null) || !playerTwo.includes(null)) {
@@ -68,54 +96,81 @@ const App = () =>{
     return false
   }
 
-  const hadnleRead = (hasbeenRead) => {
-    return (!hasbeenRead)
-  }
+
 
   const handleBoxClickPlayerOne = (indx) => {
-
+    //alert(playerXPlaying);
     const updateBoard = playerOne.map((value, index) => {
-      if (index === indx & playerXPlaying === true) {
+      if (index === indx && playerXPlaying === true) {
         update2(die, index);
-        setPlayerxPlayer(!playerXPlaying)
-        setDie(Math.floor(Math.random() * 6 + 1))
+        //setPlayerxPlayer(!playerXPlaying)
+        //setDie(Math.floor(Math.random() * 6 + 1))
         return die;
       } else {
         return value;
       }
     })
-    setPlayerOneBoard(sort(updateBoard));
-    setPlayerTwoBoard(sort(playerTwo))
-    setHasBeenRead(false)
+
+    if (playerXPlaying){ 
+    let diemove = Math.floor(Math.random() * 6 + 1); 
+    const Ref = doc(db, "Sessions", "234567890" );
+    updateDoc(  Ref, {
+      playerone: updateBoard,
+      playertwo: playerTwo,
+      playerXPlaying: false,  
+      die: diemove,
+    });
+  } 
+    
   }
 
 
   const handleBoxClickPlayerTwo = (indx) => {
-
+    //alert(playerXPlaying);
     const updateBoard = playerTwo.map((value, index) => {
-      if (index === indx & playerXPlaying === false) {
+      if (index === indx && playerXPlaying === false) {
         update1(die, index)
-        setPlayerxPlayer(!playerXPlaying)
-        setDie(Math.floor(Math.random() * 6 + 1))
+       // setPlayerxPlayer(!playerXPlaying)
+      //  setDie(Math.floor(Math.random() * 6 + 1))
         
-        
-
         return die;
       } else {
         return value;
       }
     })
-    setPlayerOneBoard(sort(playerOne))
-    setPlayerTwoBoard(sort(updateBoard));
-    setHasBeenRead(false)
+
+    if (!playerXPlaying)
+    {
+    const  Ref = doc(db, "Sessions", "234567890" );
+    let diemove = Math.floor(Math.random() * 6 + 1); 
+
+    updateDoc(Ref, {
+      playerone: playerOne,
+      playertwo: updateBoard,
+      playerXPlaying: true, 
+      die: diemove
+      
+    });
+  }
+
 
   }
 
   const resetBoard = () => {
     
-    setPlayerOneBoard(Array(9).fill(null));
-    setPlayerTwoBoard(Array(9).fill(null));
-    setDie(Math.floor(Math.random() * 6 + 1))
+    // setPlayerOneBoard(Array(9).fill(null));
+    // setPlayerTwoBoard(Array(9).fill(null));
+    // setDie(Math.floor(Math.random() * 6 + 1))
+    const Ref = doc(db, "Sessions", "234567890" );
+    let diemove = Math.floor(Math.random() * 6 + 1); 
+    updateDoc(Ref, {
+      playerone: Array(9).fill(null),
+      playertwo: Array(9).fill(null),
+      die: diemove,
+      playerXPlaying: true
+      
+    });
+    
   }
 
   const points = (board, index) => {
@@ -207,7 +262,7 @@ const App = () =>{
     }
     sort(playerTwo)
   }
-  
+  //  {WriteData()}
 
     return(
 
