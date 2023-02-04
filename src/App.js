@@ -328,25 +328,18 @@ const App = () =>{
         {handleGameOver() ? (
         <div className="GameOver">
           
-          <ScoreBoard names={{playerOneName: "POne", playerTwoName: "PTwo"}} scores={updateScore()} playerXPlaying={playerXPlaying} />
+          <ScoreBoard names={{playerOneName: "POne", playerTwoName: "PTwo"}} scores={updateScore()} playerXPlaying={playerXPlaying} ID={sessionID}/>
           <Board name={"X"} board={playerOne} onClick={null}/>
           <h1 style={{fontSize: "30px", color: "black", background: "", textAlign: "center"}}>{winner()}</h1>
           <Board name={"O"} board={playerTwo} onClick={null}/>
           <ResetButton name="Join" resetBoard={resetBoard} joinButton={AlertSession}/>
         </div>):
         (<div className="Game">
-          {/* <div>
-          <ResetButton name="Join" resetBoard={AlertSession} />
-          <h1>{sessionID}</h1>
-          </div> */}
-          
-          <ScoreBoard names={{playerOneName: "POne", playerTwoName: "PTwo"}} scores={updateScore()} playerXPlaying={playerXPlaying} />
+          <ScoreBoard names={{playerOneName: "POne", playerTwoName: "PTwo"}} scores={updateScore()} playerXPlaying={playerXPlaying} ID={sessionID}/>
           <Board name={"X"} board={playerOne} onClick={handleBoxClickPlayerOne}/>
           <Dice roll={die} clicked={false}/>
           <Board name={"O"} board={playerTwo} onClick={handleBoxClickPlayerTwo}/>
           <ResetButton name="Join" resetBoard={resetBoard} joinButton={AlertSession}/>
-          <h1>{sessionID}</h1>
-          
         </div>)}
       </div>
     )
