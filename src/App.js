@@ -71,7 +71,7 @@ const App = () =>{
         //PlayertwoName: "null", // TODO: Get player name 
   
       }, [sessionID]);
-      console.log("Writing  data...");
+      // console.log("Writing  data...");
     }  
   }
   joinSession();
@@ -103,7 +103,7 @@ const App = () =>{
         //PlayertwoName: "null", // TODO: Get player name 
   
       });
-      console.log("Writing  data...");
+      // console.log("Writing  data...");
     } 
   
 
@@ -118,10 +118,10 @@ const App = () =>{
   
   useEffect(() => {
     const unsub = onSnapshot(doc(db, "Sessions", sessionID), (doc) => {
-        console.log("Current Data: ", doc.data());
-        console.log("PlayerTwo: ", doc.data().playertwo);
-        console.log("Die: ", doc.data().die);
-        console.log("GameOver: ", doc.data().finished);
+        // console.log("Current Data: ", doc.data());
+        // console.log("PlayerTwo: ", doc.data().playertwo);
+        // console.log("Die: ", doc.data().die);
+        // console.log("GameOver: ", doc.data().finished);
         setPlayerOneBoard(sort(doc.data().playerone))
         setPlayerTwoBoard(sort(doc.data().playertwo))
         setDie(doc.data().die)
@@ -304,7 +304,24 @@ const App = () =>{
     sort(playerTwo)
   }
   //  {WriteData()}
-
+  const winner = () => {
+    const list = updateScore()
+    console.log(list)
+    if (list.playerOne > list.playerTwo) {
+      return(
+        "Player One Won!"
+      )
+    }else if (list.playerOne < list.playerTwo) {
+      return(
+        "Player Two Won!"
+      )
+    } else{
+      return(
+        "Game ended in a Tie!"
+      )
+    }
+  }
+  winner();
     return(
 
       <div>
@@ -313,22 +330,22 @@ const App = () =>{
           
           <ScoreBoard names={{playerOneName: "POne", playerTwoName: "PTwo"}} scores={updateScore()} playerXPlaying={playerXPlaying} />
           <Board name={"X"} board={playerOne} onClick={null}/>
-          <h1 style={{fontSize: "30px", color: "red", background: "lightblue", textAlign: "center"}}>gameover</h1>
+          <h1 style={{fontSize: "30px", color: "black", background: "", textAlign: "center"}}>{winner()}</h1>
           <Board name={"O"} board={playerTwo} onClick={null}/>
-          <ResetButton name="Reset" resetBoard={resetBoard} />
+          <ResetButton name="Join" resetBoard={resetBoard} joinButton={AlertSession}/>
         </div>):
         (<div className="Game">
-          <div>
+          {/* <div>
           <ResetButton name="Join" resetBoard={AlertSession} />
           <h1>{sessionID}</h1>
-          </div>
+          </div> */}
           
           <ScoreBoard names={{playerOneName: "POne", playerTwoName: "PTwo"}} scores={updateScore()} playerXPlaying={playerXPlaying} />
           <Board name={"X"} board={playerOne} onClick={handleBoxClickPlayerOne}/>
           <Dice roll={die} clicked={false}/>
           <Board name={"O"} board={playerTwo} onClick={handleBoxClickPlayerTwo}/>
-          <ResetButton name="Reset" resetBoard={resetBoard} />
-          
+          <ResetButton name="Join" resetBoard={resetBoard} joinButton={AlertSession}/>
+          <h1>{sessionID}</h1>
           
         </div>)}
       </div>
