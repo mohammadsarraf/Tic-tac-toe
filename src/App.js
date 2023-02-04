@@ -21,13 +21,13 @@ const App = () =>{
 
 
   const firebaseConfig = {
-    apiKey: "AIzaSyDPOso7TN-BQqeDH0n0RqYRD9l1sl0jG_U",
-    authDomain: "cotlbackend.firebaseapp.com",
-    projectId: "cotlbackend",
-    storageBucket: "cotlbackend.appspot.com",
-    messagingSenderId: "573479045129",
-    appId: "1:573479045129:web:72bd62c50e8f44fbc350d8",
-    measurementId: "G-4LMH1Y4PZJ"
+    apiKey: "AIzaSyCOsWTZn_IZMdSrOsZCtmn2AkFQAVqZHac",
+    authDomain: "colttest-ab666.firebaseapp.com",
+    projectId: "colttest-ab666",
+    storageBucket: "colttest-ab666.appspot.com",
+    messagingSenderId: "865140778710",
+    appId: "1:865140778710:web:4e73aa58376514066a8b77",
+    measurementId: "G-JRBB84RCE6"
   };
 
   const app = initializeApp(firebaseConfig);
@@ -35,7 +35,7 @@ const App = () =>{
   const db = getFirestore(app);
 
 
-  
+  useEffect ( () => {
   const WriteData = async () =>{
     await setDoc(doc(db, "Sessions", "234567890"), {
       playerone: playerOne,
@@ -46,7 +46,11 @@ const App = () =>{
       PlayertwoName: "null", // TODO: Get player name 
     });
     console.log("Writing  data...");
+
   }
+  WriteData(); 
+
+},[playerOne, playerTwo])
   
   
   useEffect(() => {
@@ -205,7 +209,7 @@ const App = () =>{
     }
     sort(playerTwo)
   }
-   {WriteData()}
+  //  {WriteData()}
 
     return(
 
