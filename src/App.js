@@ -7,71 +7,59 @@ import './App.css';
 import './Dice.css';
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
-// import { getDatabase, ref, onValue} from "firebase/database";
+import { getDatabase, ref, onValue} from "firebase/database";
 
 import { doc, setDoc, onSnapshot } from "firebase/firestore"; 
 import { getAnalytics } from "firebase/analytics";
 
 
 const App = () =>{
+  const [hasbeenRead, setHasBeenRead] = useState(true);
   const [playerOne, setPlayerOneBoard] = useState(Array(9).fill(null))
   const [playerTwo, setPlayerTwoBoard] = useState(Array(9).fill(null))
   const [playerXPlaying, setPlayerxPlayer] = useState(true)
-  const [check, setCheck] = useState(false)
   const [die, setDie] = useState(Math.floor(Math.random() * 6 + 1))
 
-
   const firebaseConfig = {
-    apiKey: "AIzaSyCOsWTZn_IZMdSrOsZCtmn2AkFQAVqZHac",
-    authDomain: "colttest-ab666.firebaseapp.com",
-    projectId: "colttest-ab666",
-    storageBucket: "colttest-ab666.appspot.com",
-    messagingSenderId: "865140778710",
-    appId: "1:865140778710:web:4e73aa58376514066a8b77",
-    measurementId: "G-JRBB84RCE6"
+    apiKey: "AIzaSyChA2eWNpmPbVHalWGawI2yaBdiCnhJJ2Y",
+    authDomain: "coltv2.firebaseapp.com",
+    projectId: "coltv2",
+    storageBucket: "coltv2.appspot.com",
+    messagingSenderId: "868620196777",
+    appId: "1:868620196777:web:02bdbd4f188daae93842b8",
+    measurementId: "G-4Q2N47XNVS"
   };
 
   const app = initializeApp(firebaseConfig);
   const analytics = getAnalytics(app);
   const db = getFirestore(app);
 
-
-  useEffect ( () => {
-  const WriteData = async () =>{
-    await setDoc(doc(db, "Sessions", "234567890"), {
-      playerone: playerOne,
-      playertwo: playerTwo,
-      die: die,
-      finished: handleGameOver(), 
-      PlayeroneName:   "null", 
-      //TODO: 
-      //PlayertwoName: "null", // TODO: Get player name 
-
-    }, {merge:true});
-    console.log("Writing  data...");
-
-  }
-
-  if (check === true){
-    WriteData(); 
-  }
-
-},[playerOne, playerTwo])
-  
+  useEffect(() => {
+    const WriteData = async () =>{
+      await setDoc(doc(db, "Sessions", "234567890"), {
+        playerone: playerOne,
+        playertwo: playerTwo,
+        die: die,
+        finished: handleGameOver(), 
+        PlayeroneName:   "null",  //TODO: 
+        PlayertwoName: "null", // TODO: Get player name 
+      });
+    }
+    WriteData();
+  }, [playerOne, playerTwo])
   
   useEffect(() => {
     const unsub = onSnapshot(doc(db, "Sessions", "234567890"), (doc) => {
-        console.log("Current Data: ", doc.data());
-        console.log("PlayerTwo: ", doc.data().playertwo);
-        console.log("Die: ", doc.data().die);
-        console.log("GameOver: ", doc.data().finished);
-        setPlayerOneBoard(doc.data().playerone)
-        setPlayerTwoBoard(doc.data().playertwo)
-        setDie(doc.data().die)
-        setCheck(true);
-      }
-  )
-  }, [])
+      console.log("PlayerOne: ", doc.data().playerone);
+      console.log("PlayerTwo: ", doc.data().playertwo);
+      // console.log("Die: ", doc.data().die);
+      // console.log("GameOver: ", doc.data().finished);
+      setPlayerOneBoard(doc.data().playerone)
+      setPlayerTwoBoard(doc.data().playertwo)
+      setDie(doc.data().die)
+      // setHasBeenRead(true)
+    })
+  },[])
 
   const handleGameOver = () => {
     if (!playerOne.includes(null) || !playerTwo.includes(null)) {
@@ -80,7 +68,9 @@ const App = () =>{
     return false
   }
 
-
+  const hadnleRead = (hasbeenRead) => {
+    return (!hasbeenRead)
+  }
 
   const handleBoxClickPlayerOne = (indx) => {
 
@@ -96,7 +86,7 @@ const App = () =>{
     })
     setPlayerOneBoard(sort(updateBoard));
     setPlayerTwoBoard(sort(playerTwo))
-    
+    setHasBeenRead(false)
   }
 
 
@@ -117,6 +107,7 @@ const App = () =>{
     })
     setPlayerOneBoard(sort(playerOne))
     setPlayerTwoBoard(sort(updateBoard));
+    setHasBeenRead(false)
 
   }
 
@@ -216,7 +207,7 @@ const App = () =>{
     }
     sort(playerTwo)
   }
-  //  {WriteData()}
+  
 
     return(
 
