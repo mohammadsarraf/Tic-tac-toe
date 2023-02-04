@@ -31,15 +31,56 @@ const App = () =>{
     measurementId: "G-4Q2N47XNVS"
   };
   
-
+  
   const app = initializeApp(firebaseConfig);
   const analytics = getAnalytics(app);
   const db = getFirestore(app);
+  const sessionIDGenerator = () => {
+    const radnNum = (Math.floor(Math.random() * (10)))
+    return radnNum.toString().padStart(6, '0');
+    // return "000000"
+  }
+  const [sessionID, setSessionID]= useState(sessionIDGenerator());
+
+  const AlertSession = () => {
+    let sess = prompt("Please enter the session");
+    setSessionID(sess); 
+  }
+
+  useEffect( () => {
+  const joinSession = async () => {
+    const docRef = doc(db, "Sessions", sessionID);
+    const docSnap = await getDoc(docRef);
+    
+    if (docSnap.exists()) {
+      setPlayerOneBoard(docSnap.data().playerone)
+      setPlayerTwoBoard(docSnap.data().playertwo)
+      setDie(docSnap.data().die)
+      setPlayerxPlayer(docSnap.data().playerXPlaying)
+      // alert(playerXPlaying);
+    } else {
+      // doc.data() will be undefined in this case
+      await setDoc(doc(db, "Sessions", sessionID), {
+        playerone: playerOne,
+        playertwo: playerTwo,
+        die: die,
+        finished: handleGameOver(), 
+        PlayeroneName:  "ReadyPlayerOne", 
+        playerXPlaying: true
+        //TODO: 
+        //PlayertwoName: "null", // TODO: Get player name 
+  
+      }, [sessionID]);
+      console.log("Writing  data...");
+    }  
+  }
+  joinSession();
+},[sessionID] ); 
 
 
   useEffect ( () => {
   const IntialzeBoard = async () =>{
-    const docRef = doc(db, "Sessions", "234567890");
+    const docRef = doc(db, "Sessions", sessionID);
     const docSnap = await getDoc(docRef);
     
     if (docSnap.exists()) {
@@ -51,7 +92,7 @@ const App = () =>{
       // setCheck(true);
     } else {
       // doc.data() will be undefined in this case
-      await setDoc(doc(db, "Sessions", "234567890"), {
+      await setDoc(doc(db, "Sessions", sessionID), {
         playerone: playerOne,
         playertwo: playerTwo,
         die: die,
@@ -76,7 +117,7 @@ const App = () =>{
   
   
   useEffect(() => {
-    const unsub = onSnapshot(doc(db, "Sessions", "234567890"), (doc) => {
+    const unsub = onSnapshot(doc(db, "Sessions", sessionID), (doc) => {
         console.log("Current Data: ", doc.data());
         console.log("PlayerTwo: ", doc.data().playertwo);
         console.log("Die: ", doc.data().die);
@@ -87,7 +128,7 @@ const App = () =>{
         setPlayerxPlayer(doc.data().playerXPlaying)
       }
   )
-  }, [])
+  }, [sessionID])
 
   const handleGameOver = () => {
     if (!playerOne.includes(null) || !playerTwo.includes(null)) {
@@ -113,7 +154,7 @@ const App = () =>{
 
     if (playerXPlaying){ 
     let diemove = Math.floor(Math.random() * 6 + 1); 
-    const Ref = doc(db, "Sessions", "234567890" );
+    const Ref = doc(db, "Sessions", sessionID );
     updateDoc(  Ref, {
       playerone: updateBoard,
       playertwo: playerTwo,
@@ -141,7 +182,7 @@ const App = () =>{
 
     if (!playerXPlaying)
     {
-    const  Ref = doc(db, "Sessions", "234567890" );
+    const  Ref = doc(db, "Sessions", sessionID );
     let diemove = Math.floor(Math.random() * 6 + 1); 
 
     updateDoc(Ref, {
@@ -161,7 +202,7 @@ const App = () =>{
     // setPlayerOneBoard(Array(9).fill(null));
     // setPlayerTwoBoard(Array(9).fill(null));
     // setDie(Math.floor(Math.random() * 6 + 1))
-    const Ref = doc(db, "Sessions", "234567890" );
+    const Ref = doc(db, "Sessions", sessionID );
     let diemove = Math.floor(Math.random() * 6 + 1); 
     updateDoc(Ref, {
       playerone: Array(9).fill(null),
@@ -172,7 +213,7 @@ const App = () =>{
     });
     
   }
-
+  
   const points = (board, index) => {
     
     const column = [board[index],board[index+3], board[index + 6]]
@@ -274,14 +315,20 @@ const App = () =>{
           <Board name={"X"} board={playerOne} onClick={null}/>
           <h1 style={{fontSize: "30px", color: "red", background: "lightblue", textAlign: "center"}}>gameover</h1>
           <Board name={"O"} board={playerTwo} onClick={null}/>
-          <ResetButton resetBoard={resetBoard} />
+          <ResetButton name="Reset" resetBoard={resetBoard} />
         </div>):
         (<div className="Game">
+          <div>
+          <ResetButton name="Join" resetBoard={AlertSession} />
+          <h1>{sessionID}</h1>
+          </div>
+          
           <ScoreBoard names={{playerOneName: "POne", playerTwoName: "PTwo"}} scores={updateScore()} playerXPlaying={playerXPlaying} />
           <Board name={"X"} board={playerOne} onClick={handleBoxClickPlayerOne}/>
           <Dice roll={die} clicked={false}/>
           <Board name={"O"} board={playerTwo} onClick={handleBoxClickPlayerTwo}/>
-          <ResetButton resetBoard={resetBoard} />
+          <ResetButton name="Reset" resetBoard={resetBoard} />
+          
           
         </div>)}
       </div>
