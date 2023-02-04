@@ -17,6 +17,7 @@ const App = () =>{
   const [playerOne, setPlayerOneBoard] = useState(Array(9).fill(null))
   const [playerTwo, setPlayerTwoBoard] = useState(Array(9).fill(null))
   const [playerXPlaying, setPlayerxPlayer] = useState(true)
+  const [check, setCheck] = useState(false)
   const [die, setDie] = useState(Math.floor(Math.random() * 6 + 1))
 
 
@@ -50,9 +51,12 @@ const App = () =>{
     console.log("Writing  data...");
 
   }
-  WriteData(); 
 
-},[playerOne])
+  if (check === true){
+    WriteData(); 
+  }
+
+},[playerOne, playerTwo])
   
   
   useEffect(() => {
@@ -64,6 +68,7 @@ const App = () =>{
         setPlayerOneBoard(doc.data().playerone)
         setPlayerTwoBoard(doc.data().playertwo)
         setDie(doc.data().die)
+        setCheck(true);
       }
   )
   }, [])
