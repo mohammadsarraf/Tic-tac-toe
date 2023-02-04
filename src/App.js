@@ -14,11 +14,11 @@ import { getAnalytics } from "firebase/analytics";
 
 
 const App = () =>{
-  const [hasbeenRead, setHasBeenRead] = useState(true);
   const [playerOne, setPlayerOneBoard] = useState(Array(9).fill(null))
   const [playerTwo, setPlayerTwoBoard] = useState(Array(9).fill(null))
   const [playerXPlaying, setPlayerxPlayer] = useState(true)
   const [die, setDie] = useState(Math.floor(Math.random() * 6 + 1))
+
 
   const firebaseConfig = {
     apiKey: "AIzaSyDPOso7TN-BQqeDH0n0RqYRD9l1sl0jG_U",
@@ -34,6 +34,8 @@ const App = () =>{
   const analytics = getAnalytics(app);
   const db = getFirestore(app);
 
+
+  
   const WriteData = async () =>{
     await setDoc(doc(db, "Sessions", "234567890"), {
       playerone: playerOne,
@@ -43,33 +45,23 @@ const App = () =>{
       PlayeroneName:   "null",  //TODO: 
       PlayertwoName: "null", // TODO: Get player name 
     });
+    console.log("Writing  data...");
   }
   
-  const unsub = onSnapshot(doc(db, "Sessions", "234567890"), (doc) => {
-      // console.log("Current Data: ", doc.data());
-      // console.log("PlayerTwo: ", doc.data().playertwo);
-      // console.log("Die: ", doc.data().die);
-      // console.log("GameOver: ", doc.data().finished);
-      // setPlayerOneBoard(doc.data().playerone)
-      // setPlayerTwoBoard(doc.data().playertwo)
-      // setDie(doc.data().die)
-      // setHasBeenRead(true)
-  })
-
-// const dbr = getDatabase(); 
-// const changedstate = ref(dbr, 'Sessions/234567890/playertwo');
-// onValue(changedstate, (snapshot) => {
-//   const data = snapshot.val();
-//   console.log(" This is the updated data information ", data);
-
   
-// });
+  useEffect(() => {
+    const unsub = onSnapshot(doc(db, "Sessions", "234567890"), (doc) => {
+        console.log("Current Data: ", doc.data());
+        console.log("PlayerTwo: ", doc.data().playertwo);
+        console.log("Die: ", doc.data().die);
+        console.log("GameOver: ", doc.data().finished);
+        setPlayerOneBoard(doc.data().playerone)
+        setPlayerTwoBoard(doc.data().playertwo)
+        setDie(doc.data().die)
+      }
+  )
+  }, [])
 
-// const updategameonchangedb = () =>
-// {
-  
-
-// }
   const handleGameOver = () => {
     if (!playerOne.includes(null) || !playerTwo.includes(null)) {
       return true
@@ -77,9 +69,7 @@ const App = () =>{
     return false
   }
 
-  const hadnleRead = (hasbeenRead) => {
-    return (!hasbeenRead)
-  }
+
 
   const handleBoxClickPlayerOne = (indx) => {
 
@@ -95,8 +85,7 @@ const App = () =>{
     })
     setPlayerOneBoard(sort(updateBoard));
     setPlayerTwoBoard(sort(playerTwo))
-    setHasBeenRead(false)
-    WriteData();
+    
   }
 
 
@@ -117,8 +106,6 @@ const App = () =>{
     })
     setPlayerOneBoard(sort(playerOne))
     setPlayerTwoBoard(sort(updateBoard));
-    setHasBeenRead(false)
-    WriteData();
 
   }
 
@@ -218,9 +205,7 @@ const App = () =>{
     }
     sort(playerTwo)
   }
-  if (hasbeenRead === false){
-    {WriteData()} 
-  }
+   {WriteData()}
 
     return(
 
