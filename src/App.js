@@ -20,14 +20,14 @@ const App = () =>{
   // const IntialzeBoard = false; 
 
   const firebaseConfig = {
-    apiKey: "AIzaSyChA2eWNpmPbVHalWGawI2yaBdiCnhJJ2Y",
-    authDomain: "coltv2.firebaseapp.com",
-    projectId: "coltv2",
-    storageBucket: "coltv2.appspot.com",
-    messagingSenderId: "868620196777",
-    appId: "1:868620196777:web:02bdbd4f188daae93842b8",
-    measurementId: "G-4Q2N47XNVS"
-  };
+    apiKey: "AIzaSyBl51OUfM0focTTZ3nFA-TJXq7lgpwehVA",
+    authDomain: "cotl-outside.firebaseapp.com",
+    projectId: "cotl-outside",
+    storageBucket: "cotl-outside.appspot.com",
+    messagingSenderId: "958358712279",
+    appId: "1:958358712279:web:38683e28882b302c636592",
+    measurementId: "G-5N4KQBW16K"
+  };  
   
   const app = initializeApp(firebaseConfig);
   const analytics = getAnalytics(app);
