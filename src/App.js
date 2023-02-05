@@ -16,7 +16,7 @@ const App = () =>{
   const [playerTwo, setPlayerTwoBoard] = useState(Array(9).fill(null))
   const [sessionID, setSessionID]= useState(cotl.sessionIDGenerator());
   const [playerXPlaying, setPlayerxPlayer] = useState(true)
-  const [die, setDie] = useState(Math.floor(Math.random() * 6 + 1))
+  const [die, setDie] = useState(Math.floor(Math.random() * 9 + 1))
   // const IntialzeBoard = false; 
 
   const firebaseConfig = {
@@ -109,6 +109,11 @@ const App = () =>{
   )
   },[sessionID])
 
+  const getDice = (die) => {
+    return(
+      <Dice roll={die} clicked={false}/>
+    )
+  }
   const handleBoxClickPlayerOne = (indx) => {
     //alert(playerXPlaying);
     const updateBoard = playerOne.map((value, index) => {
@@ -122,7 +127,7 @@ const App = () =>{
     })
 
     if (playerXPlaying){ 
-    let diemove = Math.floor(Math.random() * 6 + 1); 
+    let diemove = Math.floor(Math.random() * 9 + 1); 
     const Ref = doc(db, "Sessions", sessionID );
     updateDoc(  Ref, {
       playerone: updateBoard,
@@ -148,7 +153,7 @@ const App = () =>{
     if (!playerXPlaying){
 
       const  Ref = doc(db, "Sessions", sessionID );
-      let diemove = Math.floor(Math.random() * 6 + 1); 
+      let diemove = Math.floor(Math.random() * 9 + 1); 
 
       updateDoc(Ref, {
         playerone: playerOne,
@@ -157,11 +162,12 @@ const App = () =>{
         die: diemove
       });
     }
+    
   }
 
   const resetBoard = () => {
     const Ref = doc(db, "Sessions", sessionID );
-    let diemove = Math.floor(Math.random() * 6 + 1); 
+    let diemove = Math.floor(Math.random() * 9 + 1); 
 
     updateDoc(Ref, {
       playerone: Array(9).fill(null),
@@ -199,3 +205,43 @@ const App = () =>{
 }
 
 export default App;
+// import React from "react"
+
+// class App extends React.Component {
+//   render() {
+//     const ifMatch = (board) => {
+//       const match = (array, index) => {
+  
+//         let matchingIndexes = [];
+    
+//         for (let i = 0; i < array.length; i++) {
+//           for (let j = i + 1; j < array.length; j++) {
+//             if (array[i] === array[j]) {
+//               if (!matchingIndexes.includes(i)) {
+//                 matchingIndexes.push(i + index);
+//               }
+//               if (!matchingIndexes.includes(j)) {
+//                 matchingIndexes.push(j + index);
+//               }
+//             }
+//           }
+//         }
+    
+//       return matchingIndexes;
+//       }
+//       console.log("board: ", [board[1],board[1+3], board[1 + 6]])
+//       return match([1,2], 0)
+//     };
+    
+//     const array = [0,1,2,3,4,5,6,7,8]
+//     console.log("Hello: ",ifMatch(array))
+
+//     return(
+//       <div>
+//         <h2>{`hello`}</h2>
+//       </div>
+//     )
+//   }
+// }
+
+// export default App;
