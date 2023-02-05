@@ -18,7 +18,7 @@ const App = () =>{
   const [playerTwo, setPlayerTwoBoard] = useState(Array(9).fill(null))
   const [playerXPlaying, setPlayerxPlayer] = useState(true)
   const [check, setCheck] = useState(false)
-  const [die, setDie] = useState(Math.floor(Math.random() * 6 + 1))
+  const [die, setDie] = useState(Math.floor(Math.random() * 9 + 1))
   const IntialzeBoard = false; 
 
   const firebaseConfig = {
@@ -153,7 +153,7 @@ const App = () =>{
     })
 
     if (playerXPlaying){ 
-    let diemove = Math.floor(Math.random() * 6 + 1); 
+    let diemove = Math.floor(Math.random() * 9 + 1); 
     const Ref = doc(db, "Sessions", sessionID );
     updateDoc(  Ref, {
       playerone: updateBoard,
@@ -183,7 +183,7 @@ const App = () =>{
     if (!playerXPlaying)
     {
     const  Ref = doc(db, "Sessions", sessionID );
-    let diemove = Math.floor(Math.random() * 6 + 1); 
+    let diemove = Math.floor(Math.random() * 9 + 1); 
 
     updateDoc(Ref, {
       playerone: playerOne,
@@ -203,7 +203,7 @@ const App = () =>{
     // setPlayerTwoBoard(Array(9).fill(null));
     // setDie(Math.floor(Math.random() * 6 + 1))
     const Ref = doc(db, "Sessions", sessionID );
-    let diemove = Math.floor(Math.random() * 6 + 1); 
+    let diemove = Math.floor(Math.random() * 9 + 1); 
     updateDoc(Ref, {
       playerone: Array(9).fill(null),
       playertwo: Array(9).fill(null),
