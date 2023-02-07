@@ -1,4 +1,4 @@
-import './dice.css'
+import './Dice.css'
 export default function dice({diceFace, autoRun}){
     const styles = getComputedStyle(document.body);
 

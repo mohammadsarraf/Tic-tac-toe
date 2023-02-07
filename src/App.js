@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Board } from "./Board";
 import { ResetButton } from "./ResetButton";
 import { ScoreBoard } from "./ScoreBoard";
-import Dice from './dice'
+import Dice from './Dice'
 import { initializeApp } from "firebase/app";
 import { getFirestore, updateDoc } from "firebase/firestore";
 import { doc, setDoc, onSnapshot, getDoc } from "firebase/firestore"; 
