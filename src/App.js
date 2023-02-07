@@ -2,21 +2,21 @@ import React, { useState, useEffect } from "react";
 import { Board } from "./Board";
 import { ResetButton } from "./ResetButton";
 import { ScoreBoard } from "./ScoreBoard";
-import { Dice } from "./Dice";
+import Dice from './dice'
 import { initializeApp } from "firebase/app";
 import { getFirestore, updateDoc } from "firebase/firestore";
 import { doc, setDoc, onSnapshot, getDoc } from "firebase/firestore"; 
 import { getAnalytics } from "firebase/analytics";
 import * as cotl from "./Class.js";
 import './App.css';
-import './Dice.css';
+
 
 const App = () =>{
   const [playerOne, setPlayerOneBoard] = useState(Array(9).fill(null))
   const [playerTwo, setPlayerTwoBoard] = useState(Array(9).fill(null))
   const [sessionID, setSessionID]= useState(cotl.sessionIDGenerator());
   const [playerXPlaying, setPlayerxPlayer] = useState(true)
-  const [die, setDie] = useState(Math.floor(Math.random() * 9 + 1))
+  const [die, setDie] = useState(Math.floor(Math.random() * 6 + 1))
 
   const firebaseConfig = {
     apiKey: "AIzaSyBl51OUfM0focTTZ3nFA-TJXq7lgpwehVA",
@@ -126,7 +126,7 @@ const App = () =>{
     })
 
     if (playerXPlaying){ 
-    let diemove = Math.floor(Math.random() * 9 + 1); 
+    let diemove = Math.floor(Math.random() * 6 + 1); 
     const Ref = doc(db, "Sessions", sessionID );
     updateDoc(  Ref, {
       playerone: updateBoard,
@@ -152,7 +152,7 @@ const App = () =>{
     if (!playerXPlaying){
 
       const  Ref = doc(db, "Sessions", sessionID );
-      let diemove = Math.floor(Math.random() * 9 + 1); 
+      let diemove = Math.floor(Math.random() * 6 + 1); 
 
       updateDoc(Ref, {
         playerone: playerOne,
@@ -166,7 +166,7 @@ const App = () =>{
 
   const resetBoard = () => {
     const Ref = doc(db, "Sessions", sessionID );
-    let diemove = Math.floor(Math.random() * 9 + 1); 
+    let diemove = Math.floor(Math.random() * 6 + 1); 
 
     updateDoc(Ref, {
       playerone: Array(9).fill(null),
@@ -193,7 +193,7 @@ const App = () =>{
 
           <ScoreBoard names={{playerOneName: "POne", playerTwoName: "PTwo"}} scores={cotl.updateScore(playerOne, playerTwo)} playerXPlaying={playerXPlaying} ID={sessionID}/>
           <Board name={"X"} board={playerOne} onClick={handleBoxClickPlayerOne}/>
-          <Dice roll={die} clicked={false}/>
+          <Dice diceFace={die} autoRun={false}/>
           <Board name={"O"} board={playerTwo} onClick={handleBoxClickPlayerTwo}/>
           <ResetButton name="Join" resetBoard={resetBoard} joinButton={AlertSession}/>
 
