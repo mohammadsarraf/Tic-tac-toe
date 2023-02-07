@@ -1,42 +1,37 @@
-import React from 'react'
+import React from 'react';
+import * as cotl from './Class.js';
+import { Box } from './Box';
+import './Board.css';
 
-import { Box } from "./Box"
-import "./Board.css"
+export const Board = ({ name, board, onClick }) => {
+  
+  let col0 = cotl.match([board[0], board[3], board[6]]);
+  let col1 = cotl.match([board[1], board[4], board[7]]);
+  let col2 = cotl.match([board[2], board[5], board[8]]);
 
-export const Board = ({ name, board, onClick}) => {
 
-  const match = (board) => {
-    
-    const whichMatch = (index) => {
-      let matchingIndexes = [];
-      const column = [board[index],board[index+3], board[index + 6]]
-
-      for (let i = 0; i < column.length; i++) {
-        for (let j = i + 1; j < column.length; j++) {
-          if (column[i] === column[j]) {
-            matchingIndexes.push(i , j);
-            return matchingIndexes;
-          }
-        }
-      }
-    }
-    console.log("Match: " + whichMatch(0))
-    return whichMatch(0) + whichMatch(1) + whichMatch(2)
-  };
-  // console.log(match([1,2,3,4,5,6,7,8,9]))
-  match(board);
   return (
-    <div>
-      
     <div className="board">
-      
-      {
-        board.map((value, idx) => {
-          
-          return <Box  name={name} value={value} onClick={() => value === null && onClick(idx)} />;
-        })
-      }
+      {board.map((value, idx) => {
+        
+        let className = "box";
+        let fontColor = ""
+        if ([0, 3, 6].includes(idx) && (col0.length === 3 || (col0.length === 2 && col0.includes(idx/3)))) {
+          className += col0.length === 2 ? " highlighted-box2" : " highlighted-box3";
+        }
+        if ([1, 4, 7].includes(idx) && (col1.length === 3 || (col1.length === 2 && col1.includes((idx-1)/3)))) {
+          className += col1.length === 2 ? " highlighted-box2" : " highlighted-box3";
+        }
+        if ([2, 5, 8].includes(idx) && (col2.length === 3 || (col2.length === 2 && col2.includes((idx-2)/3)))) {
+          className += col2.length === 2 ? " highlighted-box2" : " highlighted-box3";
+        }
+        if (name === "X") {
+          className += " x";
+        } else if (name === "O") {
+          className += " o";
+        }
+        return  <Box className={className} style={className} name={name} value={value} onClick={() => value === null && onClick(idx)} />;
+      })}
     </div>
-    </div>
-  )
-}
+  );
+};

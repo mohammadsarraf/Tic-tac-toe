@@ -17,7 +17,6 @@ const App = () =>{
   const [sessionID, setSessionID]= useState(cotl.sessionIDGenerator());
   const [playerXPlaying, setPlayerxPlayer] = useState(true)
   const [die, setDie] = useState(Math.floor(Math.random() * 9 + 1))
-  // const IntialzeBoard = false; 
 
   const firebaseConfig = {
     apiKey: "AIzaSyBl51OUfM0focTTZ3nFA-TJXq7lgpwehVA",
@@ -205,43 +204,3 @@ const App = () =>{
 }
 
 export default App;
-// import React from "react"
-
-// class App extends React.Component {
-//   render() {
-//     const ifMatch = (board) => {
-//       const match = (array, index) => {
-  
-//         let matchingIndexes = [];
-    
-//         for (let i = 0; i < array.length; i++) {
-//           for (let j = i + 1; j < array.length; j++) {
-//             if (array[i] === array[j]) {
-//               if (!matchingIndexes.includes(i)) {
-//                 matchingIndexes.push(i + index);
-//               }
-//               if (!matchingIndexes.includes(j)) {
-//                 matchingIndexes.push(j + index);
-//               }
-//             }
-//           }
-//         }
-    
-//       return matchingIndexes;
-//       }
-//       console.log("board: ", [board[1],board[1+3], board[1 + 6]])
-//       return match([1,2], 0)
-//     };
-    
-//     const array = [0,1,2,3,4,5,6,7,8]
-//     console.log("Hello: ",ifMatch(array))
-
-//     return(
-//       <div>
-//         <h2>{`hello`}</h2>
-//       </div>
-//     )
-//   }
-// }
-
-// export default App;

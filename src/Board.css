@@ -3,22 +3,15 @@
   grid-template-columns: repeat(3, 4.8rem);
   place-items: center;
   justify-content: center;
-}
-/* 
-.board .box:nth-of-type(1),
-.board .box:nth-of-type(4),
-.board .box:nth-of-type(7) {
-  background-color: rgba(255, 255, 0, 0.26);
-}
-
-.board .box:nth-of-type(2),
-.board .box:nth-of-type(5),
-.board .box:nth-of-type(8) {
-  background-color: rgba(0, 0, 255, 0.331);
-}
-
-.board .box:nth-of-type(3),
-.board .box:nth-of-type(6),
-.board .box:nth-of-type(9) {
-  background-color: rgba(0, 128, 0, 0.395);
-} */
+  }
+  
+  
+  
+  .highlighted-box2 {
+  background-color: rgb(222, 159, 149);
+  }
+  
+  .highlighted-box3 {
+    background-color: rgb(122, 199, 215);
+  }
+  

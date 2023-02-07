@@ -97,3 +97,23 @@
     const radnNum = (Math.floor(Math.random() * (10)))
     return radnNum.toString().padStart(6, '0');
   }
+
+  export const match = (array) => {
+  
+    let matchingIndexes = [];
+
+    for (let i = 0; i < array.length; i++) {
+      for (let j = i + 1; j < array.length; j++) {
+        if (array[i] === array[j]) {
+          if (!matchingIndexes.includes(i) && array[i] !== null) {
+            matchingIndexes.push(i );
+          }
+          if (!matchingIndexes.includes(j) && array[j] !== null) {
+            matchingIndexes.push(j );
+          }
+        }
+      }
+    }
+
+  return matchingIndexes;
+  }
