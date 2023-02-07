@@ -15,7 +15,8 @@ body{
 }
 
 .dice{
-    margin: 100px;
+    margin-left: auto;
+    margin-right: auto;
     width: var(--dice-side-size);
     height: var(--dice-side-size);
     position: relative;
