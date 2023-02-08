@@ -9,7 +9,7 @@ import { doc, setDoc, onSnapshot, getDoc } from "firebase/firestore";
 import { getAnalytics } from "firebase/analytics";
 import * as cotl from "./Class.js";
 import './App.css';
-
+import {clickRotate} from "./Dice"
 
 const App = () =>{
   const [playerOne, setPlayerOneBoard] = useState(Array(9).fill(null))
@@ -17,7 +17,14 @@ const App = () =>{
   const [sessionID, setSessionID]= useState(cotl.sessionIDGenerator());
   const [playerXPlaying, setPlayerxPlayer] = useState(true)
   const [die, setDie] = useState(Math.floor(Math.random() * 6 + 1))
+  const [num, setNum] = useState(Math.floor(Math.random() * 6 + 1))
+  const [autoRun, setAutoRun] = useState(false)
 
+  const handleOnClick = () => {
+    setNum(Math.floor(Math.random() * 6 + 1))
+    setAutoRun(true)
+  }
+  
   const firebaseConfig = {
     apiKey: "AIzaSyBl51OUfM0focTTZ3nFA-TJXq7lgpwehVA",
     authDomain: "cotl-outside.firebaseapp.com",
@@ -27,7 +34,7 @@ const App = () =>{
     appId: "1:958358712279:web:38683e28882b302c636592",
     measurementId: "G-5N4KQBW16K"
   };  
-  
+
   const app = initializeApp(firebaseConfig);
   const analytics = getAnalytics(app);
   const db = getFirestore(app);
@@ -36,7 +43,7 @@ const App = () =>{
     let ID = prompt("Please enter the session");
     setSessionID(ID);
   }
-
+  
   useEffect( () => {
   const joinSession = async () => {
     const docRef = doc(db, "Sessions", sessionID);
@@ -89,8 +96,9 @@ const App = () =>{
         PlayeroneName:  "ReadyPlayerOne", 
         playerXPlaying: true
         //TODO: 
-        //PlayertwoName: "null", // TODO: Get player name 
+        //PlayertwoName: "null", // TODO: Get player name
       });
+      // clickRotate(die)
     } 
   }
     IntialzeBoard(); 
@@ -108,17 +116,13 @@ const App = () =>{
   )
   },[sessionID])
 
-  const getDice = (die) => {
-    return(
-      <Dice roll={die} clicked={false}/>
-    )
-  }
+  
   const handleBoxClickPlayerOne = (indx) => {
-    //alert(playerXPlaying);
+    
     const updateBoard = playerOne.map((value, index) => {
-      if (index === indx && playerXPlaying === true) {
+      if (index === indx && playerXPlaying === true ) {
         cotl.updateChange(die, index, playerTwo);
-        
+        handleOnClick()
         return die;
       } else {
         return value;
@@ -134,15 +138,16 @@ const App = () =>{
       playerXPlaying: false,  
       die: diemove,
     });
-  } 
+    } 
     
   }
 
   const handleBoxClickPlayerTwo = (indx) => {
-    //alert(playerXPlaying);
+    
     const updateBoard = playerTwo.map((value, index) => {
       if (index === indx && playerXPlaying === false) {
         cotl.updateChange(die, index, playerOne)
+        handleOnClick()
         return die;
       } else {
         return value;
@@ -190,10 +195,11 @@ const App = () =>{
         </div>)
           :
         (<div className="Game">
-
+          
           <ScoreBoard names={{playerOneName: "POne", playerTwoName: "PTwo"}} scores={cotl.updateScore(playerOne, playerTwo)} playerXPlaying={playerXPlaying} ID={sessionID}/>
           <Board name={"X"} board={playerOne} onClick={handleBoxClickPlayerOne}/>
-          <Dice diceFace={die} autoRun={false}/>
+          <Dice diceFace={die} onClick={handleOnClick} autoRun={autoRun} />
+          
           <Board name={"O"} board={playerTwo} onClick={handleBoxClickPlayerTwo}/>
           <ResetButton name="Join" resetBoard={resetBoard} joinButton={AlertSession}/>
 

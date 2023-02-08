@@ -4,7 +4,7 @@ body{
 :root{
     --dice-side-size: 5rem;
     --dice-pip-size: calc(var(--dice-side-size)/4);
-    --dice-side-padding-size: calc(var(--dice-side-size) + 0.7rem);
+    --dice-side-padding-size: var(--dice-side-size);
 
     --dice-face-one: rotateY(0deg) rotateX(0deg) rotateZ(0deg);
     --dice-face-two: rotateY(90deg) rotateX(0deg) rotateZ(0deg);
@@ -15,8 +15,8 @@ body{
 }
 
 .dice{
-    margin-left: auto;
-    margin-right: auto;
+    margin: 1.1rem auto 1.1rem auto;
+
     width: var(--dice-side-size);
     height: var(--dice-side-size);
     position: relative;
@@ -63,7 +63,7 @@ body{
     height: var(--dice-pip-size);
     border-radius: 50%;
     /* Center the dots */
-    margin-left: auto;
+    margin-left: auto;  
     margin-right: auto;
 
     background-color: #333;
@@ -111,5 +111,5 @@ body{
 }
 
 .random-rotation{
-    animation: random-rotation-animation 0.75s linear 2;
+    animation: random-rotation-animation 0.75s linear 1.5;
 }

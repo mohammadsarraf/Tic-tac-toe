@@ -1,16 +1,16 @@
 import './Dice.css'
-export default function dice({diceFace, autoRun}){
+export default function dice({diceFace, autoRun, onClick}){
     const styles = getComputedStyle(document.body);
 
     function clickRotate(){
-        
+        onClick();
         // This section is only to make sure you select the whole dice
         const diceElement = document.getElementsByClassName("dice")[0]
 
         diceElement.classList.toggle('random-rotation');
         setTimeout(function() {
                 diceElement.classList.remove('random-rotation');
-            }, 1000);
+            }, 2000);
         
         // Targeted side
         var facingSide = diceFace;
