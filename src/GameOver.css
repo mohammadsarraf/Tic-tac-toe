@@ -1,0 +1,47 @@
+.gameover-section{
+    position: absolute;
+    z-index: 20;
+    background-color: rgba(0, 0, 0, 0.4);
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.gameover-section .gameover-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transform: translateY(-20%);
+}
+
+.gameover-section .gameover-container .game-decision{
+    color: white;
+    font-size: 10vw;
+}
+.gameover-section .gameover-container .button-section{
+    width: 40vw;
+    height: 5vh;
+    display: flex;
+    height: fit-content;
+}
+.gameover-section .gameover-container .button-section button{
+    font-weight: bold;
+    padding: 1rem;
+    color: rgb(219, 219, 219);
+    background-color: rgb(92, 41, 188);
+    border: none;
+    border-radius: 10px;
+    width: 100%;
+    font-size: 1.5rem;
+    margin: 0 0.5rem;
+}
+
+.gameover-section .gameover-container .button-section button:hover{
+    cursor: pointer;
+    background-color: rgb(112, 49, 228);
+}

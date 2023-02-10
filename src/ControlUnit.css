@@ -1,0 +1,89 @@
+:root{
+    --show-side-menu-speed: 0.7s;
+}
+
+.top-control-section{
+    display: flex;
+    width: fit-content;
+    margin: 0.5rem;
+    
+}
+
+.gear-button{
+    display: none;
+}
+
+.buttonStyle{
+    font-weight: bold;
+    color: rgb(219, 219, 219);
+    background-color: rgb(92, 41, 188);
+    border: none;
+    border-radius: 10px;
+    padding: 10px;
+    width: 7rem;
+    font-size: 1rem;
+    margin-right: 0.5rem;
+}
+
+.top-control-section button:hover, .gear-button:hover{
+    background-color: rgb(112, 49, 228);
+    cursor: pointer;
+}
+
+@media only screen and (max-width: 1300px) {
+    .top-control-section{
+        flex-direction: column;
+        width: 5.5rem;
+        position: relative;
+        transform: translateY(-200%);
+        transition: var(--show-side-menu-speed) all ease-in-out;
+    }
+
+    .top-control-section button{
+        width: fit-content;
+        margin-bottom: 0.5rem;
+    }
+    
+    .gear-button{
+        display: block;
+        padding: 0;
+        margin: 0.5rem;
+        width: 5rem;
+        height: 5rem;
+        position: relative;
+        z-index: 10;
+        
+    }
+
+
+    .gear-button::before{
+        content: '';
+        background-color: #8693c0f6;
+        position: absolute;
+        width: 120%;
+        height: 100%;
+        top: -100%;
+        left: -10%;
+        
+    }
+    .gear-button span{
+        width: 100%;
+        font-size: 4rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transform: rotate(-360deg);
+        transition: var(--show-side-menu-speed) all ease-in-out;
+    }
+
+    .top-control-section.control-appear{
+        transform: translateY(0);
+        transition: var(--show-side-menu-speed) all ease-in-out;
+    }
+
+    .control-appear span{
+        transform: rotate(360deg);
+        transition: var(--show-side-menu-speed) all ease-in-out;
+    }
+
+}

@@ -3,7 +3,7 @@ import * as cotl from './Class.js';
 import { Box } from './Box';
 import './Board.css';
 
-export const Board = ({ name, board, onClick }) => {
+export const Board = ({ name, board, onClick, mouseHoverTile}) => {
   
   let col0 = cotl.match([board[0], board[3], board[6]]);
   let col1 = cotl.match([board[1], board[4], board[7]]);
@@ -30,7 +30,7 @@ export const Board = ({ name, board, onClick }) => {
         } else if (name === "O") {
           className += " o";
         }
-        return  <Box className={className} style={className} name={name} value={value} onClick={() => value === null && onClick(idx)} />;
+        return  <Box className={className} style={className} name={name} value={value} mouseHoverTile={mouseHoverTile} onClick={() => value === null && onClick(idx)} />;
       })}
     </div>
   );

@@ -7,9 +7,11 @@ import { initializeApp } from "firebase/app";
 import { getFirestore, updateDoc } from "firebase/firestore";
 import { doc, setDoc, onSnapshot, getDoc } from "firebase/firestore"; 
 import { getAnalytics } from "firebase/analytics";
+import ControlUnit from "./ControlUnit";
 import * as cotl from "./Class.js";
 import './App.css';
-import {clickRotate} from "./Dice"
+import './GameOver.css'
+
 
 const App = () =>{
   const [playerOne, setPlayerOneBoard] = useState(Array(9).fill(null))
@@ -17,14 +19,7 @@ const App = () =>{
   const [sessionID, setSessionID]= useState(cotl.sessionIDGenerator());
   const [playerXPlaying, setPlayerxPlayer] = useState(true)
   const [die, setDie] = useState(Math.floor(Math.random() * 6 + 1))
-  const [num, setNum] = useState(Math.floor(Math.random() * 6 + 1))
-  const [autoRun, setAutoRun] = useState(false)
 
-  const handleOnClick = () => {
-    setNum(Math.floor(Math.random() * 6 + 1))
-    setAutoRun(true)
-  }
-  
   const firebaseConfig = {
     apiKey: "AIzaSyBl51OUfM0focTTZ3nFA-TJXq7lgpwehVA",
     authDomain: "cotl-outside.firebaseapp.com",
@@ -34,7 +29,7 @@ const App = () =>{
     appId: "1:958358712279:web:38683e28882b302c636592",
     measurementId: "G-5N4KQBW16K"
   };  
-
+  
   const app = initializeApp(firebaseConfig);
   const analytics = getAnalytics(app);
   const db = getFirestore(app);
@@ -43,7 +38,7 @@ const App = () =>{
     let ID = prompt("Please enter the session");
     setSessionID(ID);
   }
-  
+
   useEffect( () => {
   const joinSession = async () => {
     const docRef = doc(db, "Sessions", sessionID);
@@ -69,7 +64,9 @@ const App = () =>{
   
       }, [sessionID]);
       // console.log("Writing  data...");
-    }  
+    }
+    
+    
   }
   joinSession();
   },[sessionID] ); 
@@ -96,12 +93,23 @@ const App = () =>{
         PlayeroneName:  "ReadyPlayerOne", 
         playerXPlaying: true
         //TODO: 
-        //PlayertwoName: "null", // TODO: Get player name
+        //PlayertwoName: "null", // TODO: Get player name 
       });
-      // clickRotate(die)
     } 
   }
-    IntialzeBoard(); 
+  
+
+  IntialzeBoard(); 
+
+  if(playerXPlaying){
+    boardBlocker("two");
+  }else{
+    boardBlocker("one");
+  }
+
+  rotateDice();
+
+
   },[])
   
   useEffect(() => {
@@ -114,15 +122,20 @@ const App = () =>{
 
       }
   )
+  
   },[sessionID])
 
-  
+  const getDice = (die) => {
+    return(
+      <Dice roll={die} clicked={false}/>
+    )
+  }
   const handleBoxClickPlayerOne = (indx) => {
-    
+    //alert(playerXPlaying);
     const updateBoard = playerOne.map((value, index) => {
-      if (index === indx && playerXPlaying === true ) {
+      if (index === indx && playerXPlaying === true) {
         cotl.updateChange(die, index, playerTwo);
-        handleOnClick()
+        
         return die;
       } else {
         return value;
@@ -138,16 +151,16 @@ const App = () =>{
       playerXPlaying: false,  
       die: diemove,
     });
-    } 
+    boardBlocker("one");
+  } 
     
   }
 
   const handleBoxClickPlayerTwo = (indx) => {
-    
+    //alert(playerXPlaying);
     const updateBoard = playerTwo.map((value, index) => {
       if (index === indx && playerXPlaying === false) {
         cotl.updateChange(die, index, playerOne)
-        handleOnClick()
         return die;
       } else {
         return value;
@@ -165,6 +178,7 @@ const App = () =>{
         playerXPlaying: true, 
         die: diemove
       });
+      boardBlocker("two");
     }
     
   }
@@ -182,29 +196,114 @@ const App = () =>{
     });
   }
 
+  // Arshia
+
+  function rotateDice(num){
+    const styles = getComputedStyle(document.body);
+    // This section is only to make sure you select the whole dice
+    const diceElement = document.getElementsByClassName("dice")[0];
+
+    diceElement.classList.toggle('random-rotation');
+    setTimeout(function() {
+            diceElement.classList.remove('random-rotation');
+        },1500);
+    
+    // Targeted side
+    var facingSide = num;
+    var transform = null;
+
+    switch(facingSide){
+        case 1:
+            transform = styles.getPropertyValue('--dice-face-one');
+            break;
+        case 2:
+            transform = styles.getPropertyValue('--dice-face-two');
+            break;
+        case 3:
+            transform = styles.getPropertyValue('--dice-face-three');
+            break;
+        case 4:
+            transform = styles.getPropertyValue('--dice-face-four');
+            break;
+        case 5:
+            transform = styles.getPropertyValue('--dice-face-five');
+            break;
+        case 6:
+            transform = styles.getPropertyValue('--dice-face-six');
+            break;
+        default:
+            transform = null;
+    }
+    diceElement.style = "transform: "+transform+"; transition: all 0.1s ease-out;";
+  }
+
+  function mouseHoverTile(e, enter){
+    const button = e.target;
+    if(button.parentNode.classList.contains("board_blocked")){
+      return 0;
+    }
+    if(enter){
+      if(button.innerHTML === ''){
+        
+        button.setAttribute('content-before',die);
+      }
+    }
+    else{
+      button.setAttribute('content-before','');
+    }
+  }
+
+  function boardBlocker(boardNo){
+    var boardOne = document.getElementsByClassName("board")[0];
+    var boardTwo = document.getElementsByClassName("board")[1];
+    
+    for(const box of boardOne.childNodes){
+      box.setAttribute('content-before','')
+    }
+    for(const box of boardTwo.childNodes){
+      box.setAttribute('content-before','')
+    }
+    if(boardNo === 'one'){
+      boardOne.classList.add("board_blocked");
+      boardTwo.classList.remove("board_blocked");
+      
+      return 0;
+    }
+    else if(boardNo == 'two'){
+      boardOne.classList.remove("board_blocked");
+      boardTwo.classList.add("board_blocked");
+
+      return 0;
+    }
+
+    // If boardNo is not declared; it will toggle between boards automatically 
+    boardOne.classList.toggle("board_blocked");
+    boardTwo.classList.toggle("board_blocked");
+    
+  }
+
     return(
-
-      <div>
-        {cotl.handleGameOver(playerOne, playerTwo) ? (
-        <div className="GameOver">
-          <ScoreBoard names={{playerOneName: "POne", playerTwoName: "PTwo"}} scores={cotl.updateScore(playerOne, playerTwo)} playerXPlaying={playerXPlaying} ID={sessionID}/>
-          <Board name={"X"} board={playerOne} onClick={null}/>
-          <h1 style={{fontSize: "30px", color: "black", background: "", textAlign: "center"}}>{cotl.winner(playerOne, playerTwo)}</h1>
-          <Board name={"O"} board={playerTwo} onClick={null}/>
-          <ResetButton name="Join" resetBoard={resetBoard} joinButton={AlertSession}/>
-        </div>)
-          :
-        (<div className="Game">
-          
-          <ScoreBoard names={{playerOneName: "POne", playerTwoName: "PTwo"}} scores={cotl.updateScore(playerOne, playerTwo)} playerXPlaying={playerXPlaying} ID={sessionID}/>
-          <Board name={"X"} board={playerOne} onClick={handleBoxClickPlayerOne}/>
-          <Dice diceFace={die} onClick={handleOnClick} autoRun={autoRun} />
-          
-          <Board name={"O"} board={playerTwo} onClick={handleBoxClickPlayerTwo}/>
-          <ResetButton name="Join" resetBoard={resetBoard} joinButton={AlertSession}/>
-
-        </div>)}
-      </div>
+      <>
+        {cotl.handleGameOver(playerOne, playerTwo) ?(
+          <section className="gameover-section">
+            <section className="gameover-container">
+              <h1 className="game-decision">Player x Won</h1>
+              <section className="button-section">
+                <button onClick={resetBoard}>Reset Game</button>
+                <button onClick={AlertSession}>Join Game</button>
+              </section>
+            </section>
+          </section>
+        
+        ):(<></>)}
+        <div className="Game">
+        <ScoreBoard names={{playerOneName: "POne", playerTwoName: "PTwo"}} scores={cotl.updateScore(playerOne, playerTwo)} playerXPlaying={playerXPlaying} ID={sessionID}/>
+        <Board name={"X"} board={playerOne} onClick={handleBoxClickPlayerOne} mouseHoverTile={mouseHoverTile}/>
+        <Dice rotateDice={rotateDice(die)}/>
+        <Board name={"O"} board={playerTwo} onClick={handleBoxClickPlayerTwo} mouseHoverTile={mouseHoverTile}/>
+        </div>
+        <ControlUnit resetGame={resetBoard} joinGame={AlertSession}/>
+      </>
 
     )
 }

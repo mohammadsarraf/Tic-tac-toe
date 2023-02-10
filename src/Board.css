@@ -1,17 +1,22 @@
 .board {
   display: grid;
-  grid-template-columns: repeat(3, 4.8rem);
-  place-items: center;
-  justify-content: center;
-  }
+  grid-template-columns: repeat(3, 1fr);
+
+}
   
   
   
-  .highlighted-box2 {
+.highlighted-box2 {
   background-color: rgb(222, 159, 149);
-  }
+}
   
-  .highlighted-box3 {
+.highlighted-box3 {
     background-color: rgb(122, 199, 215);
-  }
+}
+
+.board:nth-child(4){
+  margin-bottom: auto;
+}
+
+
   
