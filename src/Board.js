@@ -30,7 +30,8 @@ export const Board = ({ name, board, onClick, mouseHoverTile}) => {
         } else if (name === "O") {
           className += " o";
         }
-        return  <Box className={className} style={className} name={name} value={value} mouseHoverTile={mouseHoverTile} onClick={() => value === null && onClick(idx)} />;
+        return  <Box key={idx} className={idx} style={className} name={name} value={value} mouseHoverTile={mouseHoverTile} onClick={() => value === null && onClick(idx)} />
+        ;
       })}
     </div>
   );

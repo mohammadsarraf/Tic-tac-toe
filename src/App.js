@@ -40,6 +40,11 @@ const App = () =>{
   }
 
   useEffect(() => {
+    rotateDice()
+    boardBlocker(!playerXPlaying)
+  },[playerXPlaying])
+
+  useEffect(() => {
     const joinSession = async () => {
       const docRef = doc(db, "Sessions", sessionID);
       const docSnap = await getDoc(docRef);
@@ -49,6 +54,7 @@ const App = () =>{
         setPlayerTwoBoard(docSnap.data().playertwo)
         setDie(docSnap.data().die)
         setPlayerxPlayer(docSnap.data().playerXPlaying)
+        
         // alert(playerXPlaying);
       } else {
         // doc.data() will be undefined in this case
@@ -59,16 +65,18 @@ const App = () =>{
           finished: cotl.handleGameOver(playerOne, playerTwo), 
           PlayeroneName:  "ReadyPlayerOne", 
           playerXPlaying: true
+          
           //TODO: 
           //PlayertwoName: "null", // TODO: Get player name 
-    
         }, [sessionID]);
+        
         // console.log("Writing  data...");
       }
       
-      
     }
+
     joinSession();
+
   },[sessionID] ); 
 
   useEffect (() => {
@@ -81,6 +89,7 @@ const App = () =>{
         setPlayerTwoBoard(doc.data().playertwo)
         setDie(doc.data().die)
         setPlayerxPlayer(doc.data().playerXPlaying)
+        
         alert(playerXPlaying);
         // setCheck(true);
       } else {
@@ -95,21 +104,12 @@ const App = () =>{
           //TODO: 
           //PlayertwoName: "null", // TODO: Get player name 
         });
+        
       } 
     }
-    
 
     IntialzeBoard(); 
-
-    if(playerXPlaying){
-      boardBlocker("two");
-    }else{
-      boardBlocker("one");
-    }
-
     
-
-
   },[])
   
   useEffect(() => {
@@ -119,9 +119,8 @@ const App = () =>{
         setPlayerTwoBoard(cotl.sort(doc.data().playertwo))
         setDie(doc.data().die)
         setPlayerxPlayer(doc.data().playerXPlaying)
-
-      }
-  )
+        
+    })
   
   },[sessionID])
 
@@ -130,8 +129,8 @@ const App = () =>{
     //alert(playerXPlaying);
     const updateBoard = playerOne.map((value, index) => {
       if (index === indx && playerXPlaying === true) {
+
         cotl.updateChange(die, index, playerTwo);
-        
         return die;
       } else {
         return value;
@@ -139,17 +138,17 @@ const App = () =>{
     })
 
     if (playerXPlaying){ 
-    let diemove = Math.floor(Math.random() * 6 + 1); 
-    const Ref = doc(db, "Sessions", sessionID );
-    updateDoc(  Ref, {
-      playerone: updateBoard,
-      playertwo: playerTwo,
-      playerXPlaying: false,  
-      die: diemove,
-    });
-    boardBlocker("one");
-  } 
+      let diemove = Math.floor(Math.random() * 6 + 1); 
+      const Ref = doc(db, "Sessions", sessionID );
+      updateDoc(  Ref, {
+        playerone: updateBoard,
+        playertwo: playerTwo,
+        playerXPlaying: false,  
+        die: diemove,
+      });
     
+    } 
+
   }
 
   const handleBoxClickPlayerTwo = (indx) => {
@@ -175,16 +174,14 @@ const App = () =>{
         playerXPlaying: true, 
         die: diemove
       });
-      boardBlocker("two");
+      
     }
-    
-
   }
-
+  
   const resetBoard = () => {
     const Ref = doc(db, "Sessions", sessionID );
     let diemove = Math.floor(Math.random() * 6 + 1); 
-
+    
     updateDoc(Ref, {
       playerone: Array(9).fill(null),
       playertwo: Array(9).fill(null),
@@ -196,23 +193,48 @@ const App = () =>{
 
   // Arshia
 
-  const rotateDice = (facingSide) => {
-    const diceElement = document.querySelector(".dice");
+  const rotateDice = () => {
     const styles = getComputedStyle(document.body);
-    const transform = styles.getPropertyValue(`--dice-face-${facingSide}`) || null;
+    // This section is only to make sure you select the whole dice
+    const diceElement = document.getElementsByClassName("dice")[0];
+
+    diceElement.classList.toggle('random-rotation');
+    setTimeout(function() {
+            diceElement.classList.remove('random-rotation');
+        },1500);
     
-    diceElement.classList.add('random-rotation');
-    diceElement.style.transform = transform;
-    diceElement.style.transition = "all 0.1s ease-out";
-    
-    setTimeout(() => diceElement.classList.remove('random-rotation'), 1500);
+    // Targeted side
+    var facingSide = die;
+    var transform = null;
+
+    switch(facingSide){
+        case 1:
+            transform = styles.getPropertyValue('--dice-face-one');
+            break;
+        case 2:
+            transform = styles.getPropertyValue('--dice-face-two');
+            break;
+        case 3:
+            transform = styles.getPropertyValue('--dice-face-three');
+            break;
+        case 4:
+            transform = styles.getPropertyValue('--dice-face-four');
+            break;
+        case 5:
+            transform = styles.getPropertyValue('--dice-face-five');
+            break;
+        case 6:
+            transform = styles.getPropertyValue('--dice-face-six');
+            break;
+        default:
+            transform = null;
+    }
+    diceElement.style = "transform: "+transform+"; transition: all 0.1s ease-out;";
   }
   
-  
-
-
   const mouseHoverTile = (e, enter) => {
     const button = e.target;
+    
     if(button.parentNode.classList.contains("board_blocked")){
       return 0;
     }
@@ -227,7 +249,7 @@ const App = () =>{
     }
   }
 
-  const boardBlocker = (boardNo)=> {
+  const boardBlocker = (playerXPlaying)=> {
     var boardOne = document.getElementsByClassName("board")[0];
     var boardTwo = document.getElementsByClassName("board")[1];
     
@@ -237,13 +259,13 @@ const App = () =>{
     for(const box of boardTwo.childNodes){
       box.setAttribute('content-before','')
     }
-    if(boardNo === 'one'){
+    if(playerXPlaying === true){
       boardOne.classList.add("board_blocked");
       boardTwo.classList.remove("board_blocked");
       
       return 0;
     }
-    else if(boardNo == 'two'){
+    else if(playerXPlaying === false){
       boardOne.classList.remove("board_blocked");
       boardTwo.classList.add("board_blocked");
 
