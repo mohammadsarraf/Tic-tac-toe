@@ -20,7 +20,8 @@
 }
 
 .gameover-section .gameover-container .game-decision{
-    color: white;
+    color: rgb(254, 224, 0);
+    /* background-color: #8693c0fe; */
     font-size: 10vw;
 }
 .gameover-section .gameover-container .button-section{

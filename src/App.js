@@ -39,75 +39,75 @@ const App = () =>{
     setSessionID(ID);
   }
 
-  useEffect( () => {
-  const joinSession = async () => {
-    const docRef = doc(db, "Sessions", sessionID);
-    const docSnap = await getDoc(docRef);
+  useEffect(() => {
+    const joinSession = async () => {
+      const docRef = doc(db, "Sessions", sessionID);
+      const docSnap = await getDoc(docRef);
+      
+      if (docSnap.exists()) {
+        setPlayerOneBoard(docSnap.data().playerone)
+        setPlayerTwoBoard(docSnap.data().playertwo)
+        setDie(docSnap.data().die)
+        setPlayerxPlayer(docSnap.data().playerXPlaying)
+        // alert(playerXPlaying);
+      } else {
+        // doc.data() will be undefined in this case
+        await setDoc(doc(db, "Sessions", sessionID), {
+          playerone: playerOne,
+          playertwo: playerTwo,
+          die: die,
+          finished: cotl.handleGameOver(playerOne, playerTwo), 
+          PlayeroneName:  "ReadyPlayerOne", 
+          playerXPlaying: true
+          //TODO: 
+          //PlayertwoName: "null", // TODO: Get player name 
     
-    if (docSnap.exists()) {
-      setPlayerOneBoard(docSnap.data().playerone)
-      setPlayerTwoBoard(docSnap.data().playertwo)
-      setDie(docSnap.data().die)
-      setPlayerxPlayer(docSnap.data().playerXPlaying)
-      // alert(playerXPlaying);
-    } else {
-      // doc.data() will be undefined in this case
-      await setDoc(doc(db, "Sessions", sessionID), {
-        playerone: playerOne,
-        playertwo: playerTwo,
-        die: die,
-        finished: cotl.handleGameOver(playerOne, playerTwo), 
-        PlayeroneName:  "ReadyPlayerOne", 
-        playerXPlaying: true
-        //TODO: 
-        //PlayertwoName: "null", // TODO: Get player name 
-  
-      }, [sessionID]);
-      // console.log("Writing  data...");
+        }, [sessionID]);
+        // console.log("Writing  data...");
+      }
+      
+      
     }
-    
-    
-  }
-  joinSession();
+    joinSession();
   },[sessionID] ); 
 
   useEffect (() => {
-  const IntialzeBoard = async () =>{
-    const docRef = doc(db, "Sessions", sessionID);
-    const docSnap = await getDoc(docRef);
+    const IntialzeBoard = async () =>{
+      const docRef = doc(db, "Sessions", sessionID);
+      const docSnap = await getDoc(docRef);
+      
+      if (docSnap.exists()) {
+        setPlayerOneBoard(doc.data().playerone)
+        setPlayerTwoBoard(doc.data().playertwo)
+        setDie(doc.data().die)
+        setPlayerxPlayer(doc.data().playerXPlaying)
+        alert(playerXPlaying);
+        // setCheck(true);
+      } else {
+        // doc.data() will be undefined in this case
+        await setDoc(doc(db, "Sessions", sessionID), {
+          playerone: playerOne,
+          playertwo: playerTwo,
+          die: die,
+          finished: cotl.handleGameOver(playerOne, playerTwo), 
+          PlayeroneName:  "ReadyPlayerOne", 
+          playerXPlaying: true
+          //TODO: 
+          //PlayertwoName: "null", // TODO: Get player name 
+        });
+      } 
+    }
     
-    if (docSnap.exists()) {
-      setPlayerOneBoard(doc.data().playerone)
-      setPlayerTwoBoard(doc.data().playertwo)
-      setDie(doc.data().die)
-      setPlayerxPlayer(doc.data().playerXPlaying)
-      alert(playerXPlaying);
-      // setCheck(true);
-    } else {
-      // doc.data() will be undefined in this case
-      await setDoc(doc(db, "Sessions", sessionID), {
-        playerone: playerOne,
-        playertwo: playerTwo,
-        die: die,
-        finished: cotl.handleGameOver(playerOne, playerTwo), 
-        PlayeroneName:  "ReadyPlayerOne", 
-        playerXPlaying: true
-        //TODO: 
-        //PlayertwoName: "null", // TODO: Get player name 
-      });
-    } 
-  }
-  
 
-  IntialzeBoard(); 
+    IntialzeBoard(); 
 
-  if(playerXPlaying){
-    boardBlocker("two");
-  }else{
-    boardBlocker("one");
-  }
+    if(playerXPlaying){
+      boardBlocker("two");
+    }else{
+      boardBlocker("one");
+    }
 
-  rotateDice();
+    rotateDice;
 
 
   },[])
@@ -125,11 +125,7 @@ const App = () =>{
   
   },[sessionID])
 
-  const getDice = (die) => {
-    return(
-      <Dice roll={die} clicked={false}/>
-    )
-  }
+  
   const handleBoxClickPlayerOne = (indx) => {
     //alert(playerXPlaying);
     const updateBoard = playerOne.map((value, index) => {
@@ -153,7 +149,7 @@ const App = () =>{
     });
     boardBlocker("one");
   } 
-    
+    rotateDice;
   }
 
   const handleBoxClickPlayerTwo = (indx) => {
@@ -161,6 +157,7 @@ const App = () =>{
     const updateBoard = playerTwo.map((value, index) => {
       if (index === indx && playerXPlaying === false) {
         cotl.updateChange(die, index, playerOne)
+        
         return die;
       } else {
         return value;
@@ -180,7 +177,8 @@ const App = () =>{
       });
       boardBlocker("two");
     }
-    
+    rotateDice;
+
   }
 
   const resetBoard = () => {
@@ -198,46 +196,22 @@ const App = () =>{
 
   // Arshia
 
-  function rotateDice(num){
+  const rotateDice = (facingSide) => {
+    const diceElement = document.querySelector(".dice");
     const styles = getComputedStyle(document.body);
-    // This section is only to make sure you select the whole dice
-    const diceElement = document.getElementsByClassName("dice")[0];
-
-    diceElement.classList.toggle('random-rotation');
-    setTimeout(function() {
-            diceElement.classList.remove('random-rotation');
-        },1500);
+    const transform = styles.getPropertyValue(`--dice-face-${facingSide}`) || null;
     
-    // Targeted side
-    var facingSide = num;
-    var transform = null;
-
-    switch(facingSide){
-        case 1:
-            transform = styles.getPropertyValue('--dice-face-one');
-            break;
-        case 2:
-            transform = styles.getPropertyValue('--dice-face-two');
-            break;
-        case 3:
-            transform = styles.getPropertyValue('--dice-face-three');
-            break;
-        case 4:
-            transform = styles.getPropertyValue('--dice-face-four');
-            break;
-        case 5:
-            transform = styles.getPropertyValue('--dice-face-five');
-            break;
-        case 6:
-            transform = styles.getPropertyValue('--dice-face-six');
-            break;
-        default:
-            transform = null;
-    }
-    diceElement.style = "transform: "+transform+"; transition: all 0.1s ease-out;";
+    diceElement.classList.add('random-rotation');
+    diceElement.style.transform = transform;
+    diceElement.style.transition = "all 0.1s ease-out";
+    
+    setTimeout(() => diceElement.classList.remove('random-rotation'), 1500);
   }
+  
+  
 
-  function mouseHoverTile(e, enter){
+
+  const mouseHoverTile = (e, enter) => {
     const button = e.target;
     if(button.parentNode.classList.contains("board_blocked")){
       return 0;
@@ -253,7 +227,7 @@ const App = () =>{
     }
   }
 
-  function boardBlocker(boardNo){
+  const boardBlocker = (boardNo)=> {
     var boardOne = document.getElementsByClassName("board")[0];
     var boardTwo = document.getElementsByClassName("board")[1];
     
@@ -287,7 +261,7 @@ const App = () =>{
         {cotl.handleGameOver(playerOne, playerTwo) ?(
           <section className="gameover-section">
             <section className="gameover-container">
-              <h1 className="game-decision">Player x Won</h1>
+              <h1 className="game-decision">{cotl.winner(playerOne, playerTwo)}</h1>
               <section className="button-section">
                 <button onClick={resetBoard}>Reset Game</button>
                 <button onClick={AlertSession}>Join Game</button>
@@ -299,7 +273,7 @@ const App = () =>{
         <div className="Game">
         <ScoreBoard names={{playerOneName: "POne", playerTwoName: "PTwo"}} scores={cotl.updateScore(playerOne, playerTwo)} playerXPlaying={playerXPlaying} ID={sessionID}/>
         <Board name={"X"} board={playerOne} onClick={handleBoxClickPlayerOne} mouseHoverTile={mouseHoverTile}/>
-        <Dice rotateDice={rotateDice(die)}/>
+        <Dice rotateDice={rotateDice}/>
         <Board name={"O"} board={playerTwo} onClick={handleBoxClickPlayerTwo} mouseHoverTile={mouseHoverTile}/>
         </div>
         <ControlUnit resetGame={resetBoard} joinGame={AlertSession}/>
