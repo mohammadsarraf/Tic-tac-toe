@@ -107,7 +107,7 @@ const App = () =>{
       boardBlocker("one");
     }
 
-    rotateDice;
+    
 
 
   },[])
@@ -149,7 +149,7 @@ const App = () =>{
     });
     boardBlocker("one");
   } 
-    rotateDice;
+    
   }
 
   const handleBoxClickPlayerTwo = (indx) => {
@@ -177,7 +177,7 @@ const App = () =>{
       });
       boardBlocker("two");
     }
-    rotateDice;
+    
 
   }
 
