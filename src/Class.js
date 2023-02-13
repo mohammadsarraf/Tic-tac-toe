@@ -95,7 +95,7 @@
   }
 
   export const sessionIDGenerator = () => {
-    const radnNum = (Math.floor(Math.random() * (10)))
+    const radnNum = (Math.floor(Math.random() * (2)))
     return radnNum.toString().padStart(6, '0');
   }
 

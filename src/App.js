@@ -18,7 +18,7 @@ const App = () =>{
   const [playerTwo, setPlayerTwoBoard] = useState(Array(9).fill(null))
   const [sessionID, setSessionID]= useState(cotl.sessionIDGenerator());
   const [playerXPlaying, setPlayerxPlayer] = useState(true)
-  const [die, setDie] = useState(Math.floor(Math.random() * 6 + 1))
+  const [die, setDie] = useState(null)
 
   const firebaseConfig = {
     apiKey: "AIzaSyBl51OUfM0focTTZ3nFA-TJXq7lgpwehVA",
@@ -38,14 +38,18 @@ const App = () =>{
     let ID = prompt("Please enter the session");
     setSessionID(ID);
   }
-
+  
+  //Initiating the animation and boardBloker
   useEffect(() => {
     rotateDice()
     boardBlocker(!playerXPlaying)
-  },[playerXPlaying])
+  },[playerXPlaying, die])
+  //
 
   useEffect(() => {
+    
     const joinSession = async () => {
+      // resetBoard();
       const docRef = doc(db, "Sessions", sessionID);
       const docSnap = await getDoc(docRef);
       
@@ -76,15 +80,15 @@ const App = () =>{
     }
 
     joinSession();
-
+    rotateDice();
   },[sessionID] ); 
 
   useEffect (() => {
+    
     const IntialzeBoard = async () =>{
       const docRef = doc(db, "Sessions", sessionID);
       const docSnap = await getDoc(docRef);
-      
-      if (docSnap.exists()) {
+            if (docSnap.exists()) {
         setPlayerOneBoard(doc.data().playerone)
         setPlayerTwoBoard(doc.data().playertwo)
         setDie(doc.data().die)
@@ -92,6 +96,7 @@ const App = () =>{
         
         alert(playerXPlaying);
         // setCheck(true);
+        
       } else {
         // doc.data() will be undefined in this case
         await setDoc(doc(db, "Sessions", sessionID), {
@@ -121,6 +126,7 @@ const App = () =>{
         setPlayerxPlayer(doc.data().playerXPlaying)
         
     })
+    
   
   },[sessionID])
 
@@ -179,6 +185,7 @@ const App = () =>{
   }
   
   const resetBoard = () => {
+    rotateDice();
     const Ref = doc(db, "Sessions", sessionID );
     let diemove = Math.floor(Math.random() * 6 + 1); 
     
@@ -293,10 +300,10 @@ const App = () =>{
         
         ):(<></>)}
         <div className="Game">
-        <ScoreBoard names={{playerOneName: "POne", playerTwoName: "PTwo"}} scores={cotl.updateScore(playerOne, playerTwo)} playerXPlaying={playerXPlaying} ID={sessionID}/>
-        <Board name={"X"} board={playerOne} onClick={handleBoxClickPlayerOne} mouseHoverTile={mouseHoverTile}/>
-        <Dice rotateDice={rotateDice}/>
-        <Board name={"O"} board={playerTwo} onClick={handleBoxClickPlayerTwo} mouseHoverTile={mouseHoverTile}/>
+          <ScoreBoard names={{playerOneName: "POne", playerTwoName: "PTwo"}} scores={cotl.updateScore(playerOne, playerTwo)} playerXPlaying={playerXPlaying} ID={sessionID}/>
+          <Board name={"X"} board={playerOne} onClick={handleBoxClickPlayerOne} mouseHoverTile={mouseHoverTile}/>
+          <Dice rotateDice={rotateDice}/>
+          <Board name={"O"} board={playerTwo} onClick={handleBoxClickPlayerTwo} mouseHoverTile={mouseHoverTile}/>
         </div>
         <ControlUnit resetGame={resetBoard} joinGame={AlertSession}/>
       </>
