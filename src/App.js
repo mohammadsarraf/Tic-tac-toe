@@ -19,6 +19,7 @@ const App = () =>{
   const [sessionID, setSessionID]= useState(cotl.sessionIDGenerator());
   const [playerXPlaying, setPlayerxPlayer] = useState(true)
   const [die, setDie] = useState(null)
+  
 
   const firebaseConfig = {
     apiKey: "AIzaSyBl51OUfM0focTTZ3nFA-TJXq7lgpwehVA",
@@ -41,11 +42,17 @@ const App = () =>{
   
   //Initiating the animation and boardBloker
   useEffect(() => {
-    rotateDice()
-    boardBlocker(!playerXPlaying)
-  },[playerXPlaying, die])
-  //
 
+    boardBlocker(!playerXPlaying)
+
+  },[playerXPlaying])
+  //
+  useEffect(() => {
+
+    rotateDice()
+
+  },[die])
+  
   useEffect(() => {
     
     const joinSession = async () => {
@@ -80,7 +87,7 @@ const App = () =>{
     }
 
     joinSession();
-    rotateDice();
+    
   },[sessionID] ); 
 
   useEffect (() => {
@@ -114,7 +121,7 @@ const App = () =>{
     }
 
     IntialzeBoard(); 
-    rotateDice();
+    
   },[])
   
   useEffect(() => {
