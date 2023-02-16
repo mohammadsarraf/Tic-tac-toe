@@ -96,6 +96,7 @@
 
   export const sessionIDGenerator = () => {
     const radnNum = (Math.floor(Math.random() * (10)))
+    // return "Multi"
     return radnNum.toString().padStart(6, '0');
   }
 
@@ -118,3 +119,5 @@
 
   return matchingIndexes;
   }
+
+  

@@ -19,8 +19,8 @@ const App = () =>{
   const [sessionID, setSessionID]= useState(cotl.sessionIDGenerator());
   const [playerXPlaying, setPlayerxPlayer] = useState(true)
   const [die, setDie] = useState(null)
-  
-
+  const [userName, setUserName] = useState(null)
+  let players = ["playerOne", "playerTwo"]
   const firebaseConfig = {
     apiKey: "AIzaSyBl51OUfM0focTTZ3nFA-TJXq7lgpwehVA",
     authDomain: "cotl-outside.firebaseapp.com",
@@ -40,6 +40,19 @@ const App = () =>{
     setSessionID(ID);
   }
   
+  useEffect(() => {
+    const role = () => {
+      let userInput = prompt('Enter player name:');;
+
+      while (userInput !== '1' && userInput !== '2'){
+        userInput = prompt('Please enter a valid username :');
+      }
+      localStorage.setItem("userName", userInput)
+      setUserName(userInput)
+    }
+    role()
+  }, [])
+
   //Initiating the animation and boardBloker
   useEffect(() => {
 
@@ -47,12 +60,14 @@ const App = () =>{
 
   },[playerXPlaying])
   //
+
   useEffect(() => {
 
     rotateDice()
 
   },[die])
   
+
   useEffect(() => {
     
     const joinSession = async () => {
@@ -65,7 +80,7 @@ const App = () =>{
         setPlayerTwoBoard(docSnap.data().playertwo)
         setDie(docSnap.data().die)
         setPlayerxPlayer(docSnap.data().playerXPlaying)
-        
+        players = docSnap.data().players
         // alert(playerXPlaying);
       } else {
         // doc.data() will be undefined in this case
@@ -75,8 +90,8 @@ const App = () =>{
           die: die,
           finished: cotl.handleGameOver(playerOne, playerTwo), 
           PlayeroneName:  "ReadyPlayerOne", 
-          playerXPlaying: true
-          
+          playerXPlaying: true,
+          players: players
           //TODO: 
           //PlayertwoName: "null", // TODO: Get player name 
         }, [sessionID]);
@@ -93,14 +108,15 @@ const App = () =>{
   useEffect (() => {
     
     const IntialzeBoard = async () =>{
+      let diemove = Math.floor(Math.random() * 6 + 1)
       const docRef = doc(db, "Sessions", sessionID);
       const docSnap = await getDoc(docRef);
-            if (docSnap.exists()) {
+      if (docSnap.exists()) {
         setPlayerOneBoard(doc.data().playerone)
         setPlayerTwoBoard(doc.data().playertwo)
         setDie(doc.data().die)
         setPlayerxPlayer(doc.data().playerXPlaying)
-        
+        players = doc.data().players
         alert(playerXPlaying);
         // setCheck(true);
         
@@ -109,15 +125,16 @@ const App = () =>{
         await setDoc(doc(db, "Sessions", sessionID), {
           playerone: playerOne,
           playertwo: playerTwo,
-          die: die,
+          die: diemove,
           finished: cotl.handleGameOver(playerOne, playerTwo), 
           PlayeroneName:  "ReadyPlayerOne", 
-          playerXPlaying: true
+          playerXPlaying: true,
+          players: players
           //TODO: 
           //PlayertwoName: "null", // TODO: Get player name 
         });
         
-      } 
+        } 
     }
 
     IntialzeBoard(); 
@@ -139,7 +156,11 @@ const App = () =>{
 
   
   const handleBoxClickPlayerOne = (indx) => {
-    //alert(playerXPlaying);
+    
+    if (localStorage.getItem("userName") === "2") {
+      return; // If playerTwo is stored in local storage, do nothing and return
+    }
+    
     const updateBoard = playerOne.map((value, index) => {
       if (index === indx && playerXPlaying === true) {
 
@@ -164,8 +185,14 @@ const App = () =>{
 
   }
 
+
+
   const handleBoxClickPlayerTwo = (indx) => {
-    //alert(playerXPlaying);
+    
+    if (localStorage.getItem("userName") === "1") {
+      return; // If playerTwo is stored in local storage, do nothing and return
+    }
+    
     const updateBoard = playerTwo.map((value, index) => {
       if (index === indx && playerXPlaying === false) {
         cotl.updateChange(die, index, playerOne)
@@ -189,6 +216,7 @@ const App = () =>{
       });
       
     }
+
   }
   
   const resetBoard = () => {
@@ -306,7 +334,8 @@ const App = () =>{
           </section>
         
         ):(<></>)}
-        <div className="Game">
+        <div className="Game">  
+          
           <ScoreBoard names={{playerOneName: "POne", playerTwoName: "PTwo"}} scores={cotl.updateScore(playerOne, playerTwo)} playerXPlaying={playerXPlaying} ID={sessionID}/>
           <Board name={"X"} board={playerOne} onClick={handleBoxClickPlayerOne} mouseHoverTile={mouseHoverTile}/>
           <Dice rotateDice={rotateDice}/>
