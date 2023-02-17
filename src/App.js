@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Board } from "./Board";
-import { ResetButton } from "./ResetButton";
 import { ScoreBoard } from "./ScoreBoard";
 import Dice from './Dice'
 import { initializeApp } from "firebase/app";
@@ -14,13 +13,14 @@ import './GameOver.css'
 
 
 const App = () =>{
+
   const [playerOne, setPlayerOneBoard] = useState(Array(9).fill(null))
   const [playerTwo, setPlayerTwoBoard] = useState(Array(9).fill(null))
   const [sessionID, setSessionID]= useState(cotl.sessionIDGenerator());
   const [playerXPlaying, setPlayerxPlayer] = useState(true)
   const [die, setDie] = useState(null)
   const [userName, setUserName] = useState(null)
-  let players = ["playerOne", "playerTwo"]
+  
   const firebaseConfig = {
     apiKey: "AIzaSyBl51OUfM0focTTZ3nFA-TJXq7lgpwehVA",
     authDomain: "cotl-outside.firebaseapp.com",
@@ -38,19 +38,23 @@ const App = () =>{
   const AlertSession = () => {
     let ID = prompt("Please enter the session");
     setSessionID(ID);
+    localStorage.setItem("userName", "2")
+    setUserName("2");
   }
   
   useEffect(() => {
-    const role = () => {
-      let userInput = prompt('Enter player name:');;
+    // const role = () => {
+    //   let userInput = prompt('Enter player name:');;
 
-      while (userInput !== '1' && userInput !== '2'){
-        userInput = prompt('Please enter a valid username :');
-      }
-      localStorage.setItem("userName", userInput)
-      setUserName(userInput)
-    }
-    role()
+    //   while (userInput !== '1' && userInput !== '2'){
+    //     userInput = prompt('Please enter a valid username :');
+    //   }
+    //   localStorage.setItem("userName", userInput)
+    //   setUserName(userInput)
+    // }
+    // role()
+    localStorage.setItem("userName", "1")
+    setUserName("1")
   }, [])
 
   //Initiating the animation and boardBloker
@@ -66,81 +70,41 @@ const App = () =>{
     rotateDice()
 
   },[die])
-  
+
 
   useEffect(() => {
-    
     const joinSession = async () => {
       // resetBoard();
+      let diemove = Math.floor(Math.random() * 6 + 1)
       const docRef = doc(db, "Sessions", sessionID);
       const docSnap = await getDoc(docRef);
-      
+  
       if (docSnap.exists()) {
         setPlayerOneBoard(docSnap.data().playerone)
         setPlayerTwoBoard(docSnap.data().playertwo)
         setDie(docSnap.data().die)
         setPlayerxPlayer(docSnap.data().playerXPlaying)
-        players = docSnap.data().players
-        // alert(playerXPlaying);
-      } else {
-        // doc.data() will be undefined in this case
-        await setDoc(doc(db, "Sessions", sessionID), {
-          playerone: playerOne,
-          playertwo: playerTwo,
-          die: die,
-          finished: cotl.handleGameOver(playerOne, playerTwo), 
-          PlayeroneName:  "ReadyPlayerOne", 
-          playerXPlaying: true,
-          players: players
-          //TODO: 
-          //PlayertwoName: "null", // TODO: Get player name 
-        }, [sessionID]);
-        
-        // console.log("Writing  data...");
-      }
-      
-    }
 
-    joinSession();
-    
-  },[sessionID] ); 
-
-  useEffect (() => {
-    
-    const IntialzeBoard = async () =>{
-      let diemove = Math.floor(Math.random() * 6 + 1)
-      const docRef = doc(db, "Sessions", sessionID);
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        setPlayerOneBoard(doc.data().playerone)
-        setPlayerTwoBoard(doc.data().playertwo)
-        setDie(doc.data().die)
-        setPlayerxPlayer(doc.data().playerXPlaying)
-        players = doc.data().players
-        alert(playerXPlaying);
-        // setCheck(true);
-        
       } else {
         // doc.data() will be undefined in this case
         await setDoc(doc(db, "Sessions", sessionID), {
           playerone: playerOne,
           playertwo: playerTwo,
           die: diemove,
-          finished: cotl.handleGameOver(playerOne, playerTwo), 
-          PlayeroneName:  "ReadyPlayerOne", 
+          finished: cotl.handleGameOver(playerOne, playerTwo),
           playerXPlaying: true,
-          players: players
           //TODO: 
           //PlayertwoName: "null", // TODO: Get player name 
         });
-        
-        } 
+      }
+      setDie(diemove);
     }
-
-    IntialzeBoard(); 
-    
-  },[])
   
+    joinSession();
+  }, []);
+  
+
+
   useEffect(() => {
     const unsub = onSnapshot(doc(db, "Sessions", sessionID), (doc) => {
         
